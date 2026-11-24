@@ -66,7 +66,7 @@ internal class AuthView
             new TextPrompt<string>("[grey]Enter your password: [/]")
                 .Secret('*'));
 
-        while (Validator.IsValidPassword(password))
+        while (!Validator.IsValidPassword(password))
         {
             if (remainingAttempts == 1)
             {

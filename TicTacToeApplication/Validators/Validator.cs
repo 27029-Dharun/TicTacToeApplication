@@ -44,7 +44,7 @@ internal static class Validator
     /// <returns>True if the notes is valid; otherwise false.</returns>
     internal static bool IsValidName(string names)
     {
-        if (string.IsNullOrWhiteSpace(names) && names.Length < MinimumNameLength)
+        if (string.IsNullOrWhiteSpace(names) || names.Length < MinimumNameLength)
         {
             return false;
         }
