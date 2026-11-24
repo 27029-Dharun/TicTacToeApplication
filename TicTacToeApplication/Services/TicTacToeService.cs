@@ -65,7 +65,7 @@ internal class TicTacToeService
 
         if (moves[2] == moves[4] && moves[4] == moves[6] && moves[6] != Symbol.Empty)
         {
-            return moves[0];
+            return moves[2];
         }
 
         // Column

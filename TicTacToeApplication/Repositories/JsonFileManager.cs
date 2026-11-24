@@ -19,11 +19,32 @@ public class JsonFileManager
     /// </summary>
     /// <typeparam name="T">The type parameter of the data object to be written.</typeparam>
     /// <param name="filePath">The path of the file where the data are stored.</param>
-    /// <param name="list">List of the data that are to be added.</param>
-    public void WriteAll<T>(string filePath, List<T> list)
+    /// <param name="items">List of the data that are to be added.</param>
+    public void WriteAll<T>(string filePath, List<T> items)
     {
-        string json = JsonSerializer.Serialize(list, this._options);
-        File.WriteAllText(filePath, json);
+        string fullPath = Path.GetFullPath(filePath);
+        string? directory = Path.GetDirectoryName(fullPath);
+
+        if (!string.IsNullOrWhiteSpace(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        string temporaryPath = fullPath + ".tmp";
+        string json = JsonSerializer.Serialize(items, this._options);
+
+        try
+        {
+            File.WriteAllText(temporaryPath, json);
+            File.Move(temporaryPath, fullPath, true);
+        }
+        finally
+        {
+            if (File.Exists(temporaryPath))
+            {
+                File.Delete(temporaryPath);
+            }
+        }
     }
 
     /// <summary>
@@ -34,19 +55,28 @@ public class JsonFileManager
     /// <returns>A list of data that are stored in the file.</returns>
     public List<T> LoadAll<T>(string filePath)
     {
+        if (!File.Exists(filePath))
+        {
+            return new List<T>();
+        }
+
         try
         {
-            string text = File.ReadAllText(filePath);
-            if (string.IsNullOrWhiteSpace(text))
+            string json = File.ReadAllText(filePath);
+            if (string.IsNullOrWhiteSpace(json))
             {
                 return new List<T>();
             }
 
-            return JsonSerializer.Deserialize<List<T>>(text, this._options) ?? new List<T>();
+            return JsonSerializer.Deserialize<List<T>>(json, this._options) ?? new List<T>();
         }
-        catch (Exception ex)
+        catch (JsonException exception)
         {
-            throw new FileLoadException("Failed to load the data history - Please try again", ex);
+            throw new InvalidDataException($"The JSON data in '{filePath}' is invalid.", exception);
+        }
+        catch (IOException exception)
+        {
+            throw new IOException($"Unable to read '{filePath}'.", exception);
         }
     }
 }

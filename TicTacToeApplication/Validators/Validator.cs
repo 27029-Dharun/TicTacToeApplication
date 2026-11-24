@@ -59,11 +59,6 @@ internal static class Validator
     /// <returns>True if the password is valid; otherwise false.</returns>
     internal static bool IsValidPassword(string password)
     {
-        if (string.IsNullOrWhiteSpace(password) && password.Length < MinimumPasswordLength)
-        {
-            return false;
-        }
-
-        return true;
+        return !string.IsNullOrWhiteSpace(password) && password.Length >= MinimumPasswordLength;
     }
 }
