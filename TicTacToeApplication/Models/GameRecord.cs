@@ -1,4 +1,4 @@
-﻿namespace TicTacToe.Models;
+﻿namespace TicTacToeApplication.Models;
 
 internal class GameRecord
 {

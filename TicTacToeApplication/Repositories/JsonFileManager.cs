@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace TicTacToe.Repositories;
+namespace TicTacToeApplication.Repositories;
 
 /// <summary>
 /// Contains the Write and load logics that writes and loads the file in json format.
@@ -31,7 +31,7 @@ public class JsonFileManager
         }
 
         string temporaryPath = fullPath + ".tmp";
-        string json = JsonSerializer.Serialize(items, this._options);
+        string json = JsonSerializer.Serialize(items, _options);
 
         try
         {
@@ -68,7 +68,7 @@ public class JsonFileManager
                 return new List<T>();
             }
 
-            return JsonSerializer.Deserialize<List<T>>(json, this._options) ?? new List<T>();
+            return JsonSerializer.Deserialize<List<T>>(json, _options) ?? new List<T>();
         }
         catch (JsonException exception)
         {

@@ -1,6 +1,6 @@
 ﻿using Spectre.Console;
 
-namespace TicTacToe.Views;
+namespace TicTacToeApplication.Views;
 
 /// <summary>
 /// Provides helper methods for displaying messages, titles, and banners in the console.

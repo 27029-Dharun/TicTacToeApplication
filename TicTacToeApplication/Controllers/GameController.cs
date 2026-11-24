@@ -1,8 +1,8 @@
-﻿using TicTacToe.Models.Enums;
-using TicTacToe.Services;
-using TicTacToe.Views;
+﻿using TicTacToeApplication.Models.Enums;
+using TicTacToeApplication.Services;
+using TicTacToeApplication.Views;
 
-namespace TicTacToe.Controllers;
+namespace TicTacToeApplication.Controllers;
 
 /// <summary>
 /// Controls the game flow.
@@ -19,8 +19,8 @@ internal class GameController
     /// <param name="ticTacToeService">Instance of the tic-tac-toe game service.</param>
     public GameController(BoardView boardView, TicTacToeService ticTacToeService)
     {
-        this._boardView = boardView;
-        this._ticTacToeService = ticTacToeService;
+        _boardView = boardView;
+        _ticTacToeService = ticTacToeService;
     }
 
     /// <summary>
@@ -36,24 +36,24 @@ internal class GameController
 
         while (true)
         {
-            Symbol result = this._ticTacToeService.IsWinCondition(moves);
+            Symbol result = _ticTacToeService.IsWinCondition(moves);
 
             if (result != Symbol.Empty)
             {
-                this._boardView.DisplayResult(result);
+                _boardView.DisplayResult(result);
                 break;
             }
 
-            if (this._ticTacToeService.IsDraw(moves))
+            if (_ticTacToeService.IsDraw(moves))
             {
-                this._boardView.DisplayResult(Symbol.Empty);
+                _boardView.DisplayResult(Symbol.Empty);
                 break;
             }
 
-            int index = this._boardView.GetPlayerMove(moves, currentSymbol);
+            int index = _boardView.GetPlayerMove(moves, currentSymbol);
             moves[index] = currentSymbol;
 
-            currentSymbol = this._ticTacToeService.ToggleSymbol(currentSymbol);
+            currentSymbol = _ticTacToeService.ToggleSymbol(currentSymbol);
         }
     }
 }

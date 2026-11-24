@@ -1,9 +1,9 @@
-﻿using TicTacToe.Models;
-using TicTacToe.Models.Enums;
-using TicTacToe.Services;
-using TicTacToe.Views;
+﻿using TicTacToeApplication.Models;
+using TicTacToeApplication.Models.Enums;
+using TicTacToeApplication.Services;
+using TicTacToeApplication.Views;
 
-namespace TicTacToe.Controllers;
+namespace TicTacToeApplication.Controllers;
 
 /// <summary>
 /// Controls the authentication flow in the application.
@@ -20,8 +20,8 @@ internal class AuthController
     /// <param name="authView">Instance of the authentication view.</param>
     public AuthController(AuthService authService, AuthView authView)
     {
-        this._authService = authService;
-        this._authView = authView;
+        _authService = authService;
+        _authView = authView;
     }
 
     /// <summary>
@@ -34,68 +34,68 @@ internal class AuthController
         {
             try
             {
-                WelcomeChoice choice = this._authView.ShowWelcomeMenu();
+                WelcomeChoice choice = _authView.ShowWelcomeMenu();
                 switch (choice)
                 {
                     case WelcomeChoice.Login:
-                        UserSession? session = this.HandleLogIn();
+                        UserSession? session = HandleLogIn();
 
                         if (session != null)
                         {
                             return session;
                         }
 
-                        this._authView.DisplayError("Please enter a valid username and password");
+                        _authView.DisplayError("Please enter a valid username and password");
                         break;
 
                     case WelcomeChoice.SignUp:
-                        this.HandleSignUp();
+                        HandleSignUp();
                         break;
 
                     case WelcomeChoice.Guest:
-                        return this._authService.LogInGuest();
+                        return _authService.LogInGuest();
 
                     case WelcomeChoice.Exit:
                         return null;
                 }
 
-                this._authView.Pause();
+                _authView.Pause();
             }
             catch (Exception e)
             {
-                this._authView.DisplayError(e.Message);
+                _authView.DisplayError(e.Message);
             }
         }
     }
 
     private UserSession? HandleLogIn()
     {
-        this._authView.DisplayTitle("LOGIN PAGE");
+        _authView.DisplayTitle("LOGIN PAGE");
 
-        string username = this._authView.GetUserName();
-        string password = this._authView.GetPassword();
+        string username = _authView.GetUserName();
+        string password = _authView.GetPassword();
 
-        return this._authService.LogIn(username, password);
+        return _authService.LogIn(username, password);
     }
 
     private void HandleSignUp()
     {
-        this._authView.DisplayTitle("SIGN UP PAGE");
+        _authView.DisplayTitle("SIGN UP PAGE");
 
-        string username = this._authView.GetUserName();
-        string name = this._authView.GetName();
-        string email = this._authView.GetEmail();
-        string password = this._authView.GetPassword();
+        string username = _authView.GetUserName();
+        string name = _authView.GetName();
+        string email = _authView.GetEmail();
+        string password = _authView.GetPassword();
 
-        var (success, message) = this._authService.CreateUser(username, name, password, email);
+        var (success, message) = _authService.CreateUser(username, name, password, email);
 
         if (success)
         {
-            this._authView.DisplaySuccess(message);
+            _authView.DisplaySuccess(message);
         }
         else
         {
-            this._authView.DisplayError(message);
+            _authView.DisplayError(message);
         }
     }
 }

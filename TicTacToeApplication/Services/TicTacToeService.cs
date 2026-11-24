@@ -1,6 +1,6 @@
-﻿using TicTacToe.Models.Enums;
+﻿using TicTacToeApplication.Models.Enums;
 
-namespace TicTacToe.Services;
+namespace TicTacToeApplication.Services;
 
 /// <summary>
 /// Handles the business logic for the tic-tac-toe game.

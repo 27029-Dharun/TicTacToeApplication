@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace TicTacToe.Validators;
+namespace TicTacToeApplication.Validators;
 
 /// <summary>
 /// Contains the validators.

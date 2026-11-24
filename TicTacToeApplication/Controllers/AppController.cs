@@ -1,8 +1,8 @@
-﻿using TicTacToe.Models;
-using TicTacToe.Models.Enums;
-using TicTacToe.Views;
+﻿using TicTacToeApplication.Models;
+using TicTacToeApplication.Models.Enums;
+using TicTacToeApplication.Views;
 
-namespace TicTacToe.Controllers;
+namespace TicTacToeApplication.Controllers;
 
 /// <summary>
 /// Coordinates between the view and service.
@@ -21,9 +21,9 @@ internal class AppController
     /// <param name="gameController">Instance of the game controller.</param>
     public AppController(AuthController authController, AppView appView, GameController gameController)
     {
-        this._authController = authController;
-        this._appView = appView;
-        this._gameController = gameController;
+        _authController = authController;
+        _appView = appView;
+        _gameController = gameController;
     }
 
     /// <summary>
@@ -33,13 +33,13 @@ internal class AppController
     {
         while (true)
         {
-            UserSession? session = this._authController.HandleAuth();
+            UserSession? session = _authController.HandleAuth();
             if (session == null)
             {
                 break;
             }
 
-            this.RunMainMenu(session);
+            RunMainMenu(session);
         }
     }
 
@@ -47,12 +47,12 @@ internal class AppController
     {
         while (true)
         {
-            MainMenuOption option = this._appView.GetMenuOption(session);
+            MainMenuOption option = _appView.GetMenuOption(session);
 
             switch (option)
             {
                 case MainMenuOption.NewGame:
-                    this.StartNewGame();
+                    StartNewGame();
                     break;
 
                 case MainMenuOption.History:
@@ -72,10 +72,10 @@ internal class AppController
 
     private void StartNewGame()
     {
-        GameMode mode = this._appView.GetGameMode();
-        TimerOption timerOption = this._appView.GetTimerOption();
+        GameMode mode = _appView.GetGameMode();
+        TimerOption timerOption = _appView.GetTimerOption();
 
-        this._gameController.StartGame(mode, timerOption);
+        _gameController.StartGame(mode, timerOption);
 
         Ui.Pause();
     }

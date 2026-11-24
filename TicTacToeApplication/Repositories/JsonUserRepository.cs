@@ -1,6 +1,6 @@
-﻿using TicTacToe.Models;
+﻿using TicTacToeApplication.Models;
 
-namespace TicTacToe.Repositories;
+namespace TicTacToeApplication.Repositories;
 
 /// <summary>
 /// Provides a JSON file based implementation of <see cref="IUserRepository"/> for persisting and retrieving user accounts.
@@ -18,34 +18,34 @@ internal class JsonUserRepository : IUserRepository
     /// <param name="path">The path of the file to be stored.</param>
     public JsonUserRepository(JsonFileManager jsonFileManager, string path)
     {
-        this._jsonFileManager = jsonFileManager;
-        this._filePath = path;
-        if (!File.Exists(this._filePath))
+        _jsonFileManager = jsonFileManager;
+        _filePath = path;
+        if (!File.Exists(_filePath))
         {
-            File.WriteAllText(this._filePath, "[]");
-            this._users = new List<User>();
+            File.WriteAllText(_filePath, "[]");
+            _users = new List<User>();
             return;
         }
 
-        this._users = this._jsonFileManager.LoadAll<User>(this._filePath);
+        _users = _jsonFileManager.LoadAll<User>(_filePath);
     }
 
     /// <inheritdoc/>
     public void AddUser(User user)
     {
-        this._users.Add(user);
-        this._jsonFileManager.WriteAll(this._filePath, this._users);
+        _users.Add(user);
+        _jsonFileManager.WriteAll(_filePath, _users);
     }
 
     /// <inheritdoc/>
     public User? GetUser(string userName)
     {
-        return this._users.FirstOrDefault(user => user.UserName == userName);
+        return _users.FirstOrDefault(user => user.UserName == userName);
     }
 
     /// <inheritdoc/>
     public bool Exists(string userName)
     {
-        return this._users.Any(user => user.UserName == userName);
+        return _users.Any(user => user.UserName == userName);
     }
 }

@@ -1,9 +1,9 @@
-﻿using TicTacToe.Controllers;
-using TicTacToe.Repositories;
-using TicTacToe.Services;
-using TicTacToe.Views;
+﻿using TicTacToeApplication.Controllers;
+using TicTacToeApplication.Repositories;
+using TicTacToeApplication.Services;
+using TicTacToeApplication.Views;
 
-namespace TicTacToe;
+namespace TicTacToeApplication;
 
 /// <summary>
 /// Application entry point wires up the dependency once.

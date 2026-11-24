@@ -1,8 +1,8 @@
 ﻿using Spectre.Console;
-using TicTacToe.Models;
-using TicTacToe.Models.Enums;
+using TicTacToeApplication.Models;
+using TicTacToeApplication.Models.Enums;
 
-namespace TicTacToe.Views;
+namespace TicTacToeApplication.Views;
 
 /// <summary>
 /// Handles the main screens, menus, and banners shown to the user in the console.
@@ -18,7 +18,7 @@ internal class AppView
     {
         AnsiConsole.Clear();
 
-        this.Banner("MAIN MENU", session);
+        Banner("MAIN MENU", session);
 
         var mainMenu = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()

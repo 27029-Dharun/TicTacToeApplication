@@ -1,4 +1,4 @@
-﻿namespace TicTacToe.Models;
+﻿namespace TicTacToeApplication.Models;
 
 /// <summary>
 /// Represents a user session.
@@ -12,8 +12,8 @@ internal class UserSession
     /// <param name="isGuest">True if the user is guest</param>
     public UserSession(string userName, bool isGuest)
     {
-        this.UserName = userName;
-        this.IsGuest = isGuest;
+        UserName = userName;
+        IsGuest = isGuest;
     }
 
     /// <summary>

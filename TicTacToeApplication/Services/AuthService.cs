@@ -1,7 +1,7 @@
-﻿using TicTacToe.Models;
-using TicTacToe.Repositories;
+﻿using TicTacToeApplication.Models;
+using TicTacToeApplication.Repositories;
 
-namespace TicTacToe.Services;
+namespace TicTacToeApplication.Services;
 
 /// <summary>
 /// Contains the business logic for service layer.
@@ -16,7 +16,7 @@ internal class AuthService
     /// <param name="userRepository">The instance of the repository.</param>
     public AuthService(IUserRepository userRepository)
     {
-        this._userRepository = userRepository;
+        _userRepository = userRepository;
     }
 
     /// <summary>
@@ -29,7 +29,7 @@ internal class AuthService
     /// <returns>A tuple with status and message returned from the method.</returns>
     public (bool success, string message) CreateUser(string userName, string name, string password, string email)
     {
-        if (this._userRepository.Exists(userName))
+        if (_userRepository.Exists(userName))
         {
             return (false, "Username already exists\n");
         }
@@ -38,7 +38,7 @@ internal class AuthService
 
         User user = new User(userName, name, email, hashedPassword, DateTime.UtcNow);
 
-        this._userRepository.AddUser(user);
+        _userRepository.AddUser(user);
         return (true, "User created successfully\n");
     }
 
@@ -50,7 +50,7 @@ internal class AuthService
     /// <returns>The user session created.</returns>
     public UserSession? LogIn(string userName, string password)
     {
-        User? user = this._userRepository.GetUser(userName);
+        User? user = _userRepository.GetUser(userName);
 
         if (user == null)
         {

@@ -1,4 +1,4 @@
-﻿namespace TicTacToe.Models;
+﻿namespace TicTacToeApplication.Models;
 
 /// <summary>
 /// Represents a user.
@@ -15,11 +15,11 @@ internal class User
     /// <param name="joinDate">The date of creating account.</param>
     public User(string userName, string name, string email, string hashedPassword, DateTime joinDate)
     {
-        this.UserName = userName;
-        this.Name = name;
-        this.Email = email;
-        this.HashedPassword = hashedPassword;
-        this.JoinDate = joinDate;
+        UserName = userName;
+        Name = name;
+        Email = email;
+        HashedPassword = hashedPassword;
+        JoinDate = joinDate;
     }
 
     /// <summary>

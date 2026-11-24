@@ -1,4 +1,4 @@
-﻿namespace TicTacToe.Models.Enums;
+﻿namespace TicTacToeApplication.Models.Enums;
 
 /// <summary>
 /// Contains the game mode options available.

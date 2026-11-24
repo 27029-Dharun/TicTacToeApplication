@@ -1,8 +1,8 @@
 ﻿using Spectre.Console;
-using TicTacToe.Models.Enums;
-using TicTacToe.Validators;
+using TicTacToeApplication.Models.Enums;
+using TicTacToeApplication.Validators;
 
-namespace TicTacToe.Views;
+namespace TicTacToeApplication.Views;
 
 /// <summary>
 /// Handles authentication screens shown to the user.
@@ -33,7 +33,7 @@ internal class AuthView
     /// <returns>The validated email string.</returns>
     internal string GetEmail()
     {
-        return this.GetValidatedInput(
+        return GetValidatedInput(
             "Enter your email: ",
             false,
             Validator.IsValidEmail,
@@ -46,7 +46,7 @@ internal class AuthView
     /// <returns>The validated full name string.</returns>
     internal string GetName()
     {
-        return this.GetValidatedInput(
+        return GetValidatedInput(
             "Enter your full name: ",
             false,
             Validator.IsValidName,
@@ -91,7 +91,7 @@ internal class AuthView
     /// <returns>The validated username string.</returns>
     internal string GetUserName()
     {
-        return this.GetValidatedInput(
+        return GetValidatedInput(
             "Enter your username (unique): ",
             false,
             Validator.IsValidName,
@@ -155,7 +155,7 @@ internal class AuthView
         string errorMessage)
     {
         int remainingAttempts = 3;
-        string input = this.GetString(prompt);
+        string input = GetString(prompt);
         if (isEditMode && string.IsNullOrWhiteSpace(input))
         {
             return string.Empty;
@@ -170,7 +170,7 @@ internal class AuthView
 
             Ui.Error(errorMessage);
             Ui.Error($"Tries left: {--remainingAttempts}\n");
-            input = this.GetString(prompt);
+            input = GetString(prompt);
         }
 
         return input;

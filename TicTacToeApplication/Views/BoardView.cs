@@ -1,8 +1,8 @@
 ﻿using Spectre.Console;
 using Spectre.Console.Rendering;
-using TicTacToe.Models.Enums;
+using TicTacToeApplication.Models.Enums;
 
-namespace TicTacToe.Views;
+namespace TicTacToeApplication.Views;
 
 /// <summary>
 /// Handles drawing the Tic-Tac-Toe board, reading player moves.
@@ -25,12 +25,12 @@ internal class BoardView
 
         int chosenIndex = -1;
 
-        AnsiConsole.Live(this.RenderBoard(board, selectedIndex))
+        AnsiConsole.Live(RenderBoard(board, selectedIndex))
             .Start(ctx =>
             {
                 while (chosenIndex == -1)
                 {
-                    ctx.UpdateTarget(this.RenderBoard(board, selectedIndex));
+                    ctx.UpdateTarget(RenderBoard(board, selectedIndex));
 
                     ConsoleKey key = Console.ReadKey(intercept: true).Key;
 
@@ -65,7 +65,7 @@ internal class BoardView
 
                 // Render final move without cursor highlight
                 board[chosenIndex] = currentPlayerSymbol;
-                ctx.UpdateTarget(this.RenderBoard(board, -1));
+                ctx.UpdateTarget(RenderBoard(board, -1));
             });
 
         return chosenIndex;
@@ -107,9 +107,9 @@ internal class BoardView
         for (int i = 0; i < symbols.Length; i += 3)
         {
             ticTacToeBoard.AddRow(
-                this.FormatCell(symbols[i], i == selectedIndex),
-                this.FormatCell(symbols[i + 1], i + 1 == selectedIndex),
-                this.FormatCell(symbols[i + 2], i + 2 == selectedIndex));
+                FormatCell(symbols[i], i == selectedIndex),
+                FormatCell(symbols[i + 1], i + 1 == selectedIndex),
+                FormatCell(symbols[i + 2], i + 2 == selectedIndex));
         }
 
         return Align.Center(ticTacToeBoard);
