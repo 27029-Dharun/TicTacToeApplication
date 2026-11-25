@@ -2,6 +2,7 @@
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using TicTacToeApplication.Models.Enums;
+using TicTacToeApplication.Validators;
 
 namespace TicTacToeApplication.Views;
 
@@ -92,6 +93,7 @@ internal class BoardView
                     break;
 
                 case ConsoleKey.Escape:
+                case ConsoleKey.Q:
                     return QuitMove;
 
                 case ConsoleKey.Enter:
@@ -116,29 +118,22 @@ internal class BoardView
     /// <summary>
     /// Displays the final board state along with the winner or draw banner.
     /// </summary>
-    internal void DisplayResult(Symbol winner, string? customMessage = null)
+    internal void DisplayResult(string customMessage)
     {
-        string resultText = customMessage ?? winner switch
-        {
-            Symbol.X => $"[bold green]{Markup.Escape(_playerName)} (X) wins the match![/]",
-            Symbol.O => "[bold red]Computer (O) wins the match![/]",
-            _ => "[bold yellow]It's a draw![/]"
-        };
-
-        _liveContext?.UpdateTarget(BuildScreen(-1, Symbol.Empty, 0, resultText));
+        _liveContext?.UpdateTarget(BuildScreen(-1, Symbol.Empty, 0, customMessage));
     }
 
-    private IRenderable BuildScreen( int selectedIndex, Symbol currentTurn, int remainingSeconds, string? result = null)
+    private IRenderable BuildScreen(int selectedIndex, Symbol currentTurn, int remainingSeconds, string? result = null)
     {
         var header = new Markup(
             $"[bold aqua]TIC TAC TOE[/]\n" +
-            $"Player: [green]{Markup.Escape(_playerName)}[/]  [grey]|[/]  " +
+            $"[green]{Markup.Escape(_playerName)}()[/] Vs  " +
             $"Mode: [yellow]{_mode}[/]");
 
         string statusLine = result ?? (
             _timer == TimerOption.None
                 ? $"Turn: [bold]{currentTurn}[/]  [grey](Arrows to move, Enter to place, Esc to quit)[/]"
-                : $"Turn: [bold]{currentTurn}[/]  [grey]|[/]  Time Left: [bold yellow]{remainingSeconds}s[/]");
+                : $"Turn: [bold]{currentTurn}[/]  [grey] | [/]  Time Left: [bold yellow]{remainingSeconds}s[/]");
 
         var status = new Markup(statusLine);
 
@@ -184,5 +179,29 @@ internal class BoardView
             Symbol.O => $"[bold yellow]{padded}[/]",
             _ => padded
         };
+    }
+
+    internal string GetPlayerName()
+    {
+        int remainingAttempts = 3;
+
+        string password = AnsiConsole.Prompt(
+            new TextPrompt<string>("[grey]Enter the username of player 2: [/]"));
+
+        while (!Validator.IsValidName(password))
+        {
+            if (remainingAttempts == 1)
+            {
+                throw new InvalidDataException("No attempt left, Please try again.\n");
+            }
+
+            Ui.Error($"Enter a valid username with minimum {Validator.MinimumNameLength} characters\n");
+            Ui.Error($"Tries left: {--remainingAttempts}\n");
+
+            password = AnsiConsole.Prompt(
+            new TextPrompt<string>("[grey]Enter the username of player 2: [/]"));
+        }
+
+        return password;
     }
 }

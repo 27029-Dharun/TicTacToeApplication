@@ -1,5 +1,5 @@
 ﻿using TicTacToeApplication.Models;
-using TicTacToeApplication.Repositories;
+using TicTacToeApplication.Repositories.Interfaces;
 
 namespace TicTacToeApplication.Services;
 

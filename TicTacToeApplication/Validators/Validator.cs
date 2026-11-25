@@ -20,7 +20,7 @@ internal static class Validator
     /// <summary>
     /// Minimum length of the name.
     /// </summary>
-    internal const int MinimumNameLength = 5;
+    internal const int MinimumNameLength = 3;
 
     /// <summary>
     /// Validates email.

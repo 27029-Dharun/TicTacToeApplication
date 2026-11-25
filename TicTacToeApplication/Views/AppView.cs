@@ -144,9 +144,9 @@ internal class AppView
             {
                 string rankColor = rank switch
                 {
-                    1 => "bold gold1",
+                    1 => "bold gold",
                     2 => "bold silver",
-                    3 => "bold darkorange3",
+                    3 => "bold yellow",
                     _ => "grey"
                 };
 
@@ -159,12 +159,41 @@ internal class AppView
         }
 
         AnsiConsole.Write(table);
-        AnsiConsole.WriteLine();
-        Ui.Pause();
     }
 
     internal void DisplayProfile(Score score)
     {
-        Ui.Title("Profile Page");
+        AnsiConsole.Clear();
+
+        Ui.Banner("PROFILE",
+            $"Username: [grey]{score.Username}[/]\n");
+
+        Ui.Banner("STATISTICS",
+            $"Game played: [grey]{score.Wins + score.Losses + score.Draws}[/]\n" +
+            $"Wins: [green]{score.Wins}[/]\n" +
+            $"Losses: [red]{score.Losses}[/]\n" +
+            $"Draws: [yellow]{score.Draws}[/]\n" +
+            $"Total points: [yellow]{score.TotalPoints}[/]\n");
+
+        var chart = new BarChart()
+        .Width(50)
+        .Label("[bold aqua]Points by Game Mode[/]")
+        .CenterLabel()
+        .AddItem("Easy", score.PointsByMode.GetValueOrDefault(GameMode.Easy), Color.Green)
+        .AddItem("Medium", score.PointsByMode.GetValueOrDefault(GameMode.Medium), Color.Yellow)
+        .AddItem("Hard", score.PointsByMode.GetValueOrDefault(GameMode.Hard), Color.Red)
+        .AddItem("Manual", score.PointsByMode.GetValueOrDefault(GameMode.Manual), Color.Aqua);
+
+        AnsiConsole.Write(chart);
+    }
+
+    internal bool ConfirmLogout()
+    {
+        return Ui.Confirm("Logging out will delete the user data\nDo you really want to quit?");
+    }
+
+    internal void DisplayInfo(string message)
+    {
+        Ui.Info(message);
     }
 }

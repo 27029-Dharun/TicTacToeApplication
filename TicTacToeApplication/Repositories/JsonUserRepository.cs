@@ -1,4 +1,5 @@
 ﻿using TicTacToeApplication.Models;
+using TicTacToeApplication.Repositories.Interfaces;
 
 namespace TicTacToeApplication.Repositories;
 

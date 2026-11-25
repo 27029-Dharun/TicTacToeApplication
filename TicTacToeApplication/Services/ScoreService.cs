@@ -6,16 +6,16 @@ namespace TicTacToeApplication.Services;
 
 internal class ScoreService
 {
-    private readonly IScoreRepository _scoreRepository;
+    private readonly RepositorySelector _scoreRepository;
 
-    public ScoreService(IScoreRepository scoreRepository)
+    public ScoreService(RepositorySelector repository)
     {
-        _scoreRepository = scoreRepository;
+        _scoreRepository = repository;
     }
 
-    public List<(string Username, int TotalPoints, int Wins)> GetScores()
+    public List<(string Username, int TotalPoints, int Wins)> GetScores(UserSession session)
     {
-        return _scoreRepository.GetAll()
+        return _scoreRepository.GetScoreRepository(session).GetAll()
             .OrderByDescending(s => s.TotalPoints)
             .ThenByDescending(s => s.Wins)
             .Take(20)
@@ -23,37 +23,37 @@ internal class ScoreService
             .ToList();
     }
 
-    public Score GetScoreByUserName(string userName)
+    public Score GetScoreByUserName(string userName, UserSession session)
     {
-        return _scoreRepository.GetScore(userName);
+        return _scoreRepository.GetScoreRepository(session).GetScore(userName);
     }
 
-    public void RecordWin(string userName, GameMode mode)
+    public void RecordWin(string userName, GameMode mode, UserSession session)
     {
-        Score playerScore = _scoreRepository.GetScore(userName);
+        Score playerScore = _scoreRepository.GetScoreRepository(session).GetScore(userName);
         int pointsEarned = GetPointsForMode(mode);
 
         playerScore.Wins++;
         playerScore.TotalPoints += pointsEarned;
         playerScore.PointsByMode[mode] = playerScore.PointsByMode.GetValueOrDefault(mode) + pointsEarned;
 
-        _scoreRepository.SaveScore(playerScore);
+        _scoreRepository.GetScoreRepository(session).SaveScore(playerScore);
     }
 
-    public void RecordLoss(string userName)
+    public void RecordLoss(string userName, UserSession session)
     {
-        Score playerScore = _scoreRepository.GetScore(userName);
+        Score playerScore = _scoreRepository.GetScoreRepository(session).GetScore(userName);
         playerScore.Losses++;
 
-        _scoreRepository.SaveScore(playerScore);
+        _scoreRepository.GetScoreRepository(session).SaveScore(playerScore);
     }
 
-    public void RecordDraw(string userName)
+    public void RecordDraw(string userName, UserSession session)
     {
-        Score playerScore = _scoreRepository.GetScore(userName);
+        Score playerScore = _scoreRepository.GetScoreRepository(session).GetScore(userName);
         playerScore.Draws++;
 
-        _scoreRepository.SaveScore(playerScore);
+        _scoreRepository.GetScoreRepository(session).SaveScore(playerScore);
     }
 
     private int GetPointsForMode(GameMode mode)
@@ -66,5 +66,10 @@ internal class ScoreService
             GameMode.Manual => 2,
             _ => 0
         };
+    }
+
+    internal void ClearGuestData(UserSession session)
+    {
+        _scoreRepository.ClearGuest(session);
     }
 }

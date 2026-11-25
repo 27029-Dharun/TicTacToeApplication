@@ -70,9 +70,9 @@ internal class Ui
     public static void Banner(string title, string markupBody)
     {
         var panel = new Panel(Align.Center(
-        new Markup(
+            new Markup(
                 $"[bold aqua]{Markup.Escape(title)}[/]\n" +
-                $"[grey]{Markup.Escape(markupBody)}[/]")))
+                $"{markupBody}")))
             .Border(BoxBorder.Rounded)
             .BorderStyle(Color.Aqua)
             .Expand();

@@ -1,8 +1,9 @@
 ﻿using TicTacToeApplication.Models;
+using TicTacToeApplication.Repositories.Interfaces;
 
 namespace TicTacToeApplication.Repositories;
 
-internal class ScoreRepository : IScoreRepository
+internal class JsonScoreRepository : IScoreRepository
 {
     private readonly List<Score> _scores;
     private readonly JsonFileManager _jsonFileManager;
@@ -13,7 +14,7 @@ internal class ScoreRepository : IScoreRepository
     /// </summary>
     /// <param name="jsonFileManager">The instance of the Json file manager</param>
     /// <param name="path">The path of the file to be stored.</param>
-    public ScoreRepository(JsonFileManager jsonFileManager, string path)
+    public JsonScoreRepository(JsonFileManager jsonFileManager, string path)
     {
         _jsonFileManager = jsonFileManager;
         _filePath = path;

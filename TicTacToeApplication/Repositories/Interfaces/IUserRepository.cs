@@ -1,6 +1,6 @@
 ﻿using TicTacToeApplication.Models;
 
-namespace TicTacToeApplication.Repositories;
+namespace TicTacToeApplication.Repositories.Interfaces;
 
 /// <summary>
 /// Defines data access operations for managing user accounts.

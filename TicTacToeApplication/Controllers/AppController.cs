@@ -50,9 +50,9 @@ internal class AppController
     {
         while (true)
         {
-            Score score = _scoreService.GetScoreByUserName(session.UserName);
+            Score score = _scoreService.GetScoreByUserName(session.UserName, session);
             MainMenuOption option = _appView.GetMenuOption(session, score.TotalPoints, score.Wins);
-            
+
             switch (option)
             {
                 case MainMenuOption.NewGame:
@@ -67,27 +67,38 @@ internal class AppController
                     break;
 
                 case MainMenuOption.LeaderBoard:
+                    if(session.IsGuest)
+                    {
+                        this._appView.DisplayInfo("Login as user to the see the leaderboard\n");
+                        break;
+                    }
+
                     DisplayLeaderBoard(session);
                     break;
 
                 case MainMenuOption.Logout:
-                    return;
+                    if (session.IsGuest && this._appView.ConfirmLogout())
+                    {
+                        _scoreService.ClearGuestData(session);
+                        return;
+                    }
+
+                    break;
             }
 
             Ui.Pause();
         }
     }
-
+    
     private void DisplayProfile(UserSession session)
     {
-        Score score = this._scoreService.GetScoreByUserName(session.UserName);
-
+        Score score = this._scoreService.GetScoreByUserName(session.UserName, session);
         _appView.DisplayProfile(score);
     }
 
     private void DisplayLeaderBoard(UserSession session)
     {
-        List<(string Username, int TotalPoints, int Wins)> leaderboard = _scoreService.GetScores();
+        List<(string Username, int TotalPoints, int Wins)> leaderboard = _scoreService.GetScores(session);
         _appView.DisplayLeaderBoard(session.UserName, leaderboard);
     }
 
@@ -96,6 +107,6 @@ internal class AppController
         GameMode mode = _appView.GetGameMode();
         TimerOption timerOption = _appView.GetTimerOption();
 
-        _gameController.StartGame(mode, timerOption, session.UserName);
+        _gameController.StartGame(mode, timerOption, session);
     }
 }

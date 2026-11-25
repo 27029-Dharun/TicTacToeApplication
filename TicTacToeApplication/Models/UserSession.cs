@@ -14,6 +14,7 @@ internal class UserSession
     {
         UserName = userName;
         IsGuest = isGuest;
+        IsStart = true;
     }
 
     /// <summary>
@@ -27,4 +28,9 @@ internal class UserSession
     /// </summary>
     /// <value>The guest login.</value>
     public bool IsGuest { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the user has taken their last turn in the game.
+    /// </summary>
+    public bool IsStart { get; set; }
 }

@@ -1,5 +1,6 @@
 ﻿using TicTacToeApplication.Controllers;
 using TicTacToeApplication.Repositories;
+using TicTacToeApplication.Repositories.Interfaces;
 using TicTacToeApplication.Services;
 using TicTacToeApplication.Views;
 
@@ -19,8 +20,12 @@ internal class Program
         AuthView authView = new AuthView();
         AuthController authController = new AuthController(authService, authView);
 
-        IScoreRepository scoreRepository = new ScoreRepository(jsonFileManager, "Score.json");
-        ScoreService scoreService = new ScoreService(scoreRepository);
+        JsonScoreRepository jsonScoreRepository = new JsonScoreRepository(jsonFileManager, "Score.json");
+        InMemoryScoreRepository inMemoryScoreRepository = new InMemoryScoreRepository();
+
+        RepositorySelector repositorySelector = new RepositorySelector(jsonScoreRepository ,inMemoryScoreRepository);
+
+        ScoreService scoreService = new ScoreService(repositorySelector);
 
         BoardView boardView = new BoardView();
         TicTacToeService ticTacToeService = new TicTacToeService();
