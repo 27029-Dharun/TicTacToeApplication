@@ -7,15 +7,22 @@ using TicTacToe.Validators;
 namespace TicTacToe.Views;
 
 /// <summary>
-/// Display the 
+/// Display the board and handles user input for moves in the Tic Tac Toe game.
 /// </summary>
 internal class BoardView
 {
+    /// <summary>
+    /// Constant representing a move where the player chooses to quit the game.
+    /// </summary>
     public const int QuitMove = -1;
+
+    /// <summary>
+    /// Constant representing a move where the player runs out of time to make a move.
+    /// </summary>
     public const int TimeoutMove = -2;
 
     private Symbol[] _board = Array.Empty<Symbol>();
-    private string _playerName;
+    private string _playerName = string.Empty;
     private GameMode _mode;
     private TimerOption _timer;
     private LiveDisplayContext? _liveContext;
@@ -23,6 +30,11 @@ internal class BoardView
     /// <summary>
     /// Starts a live display session for the match.
     /// </summary>
+    /// <param name="board">The board state.</param>
+    /// <param name="playerName">Player name.</param>
+    /// <param name="mode">Mode of the game.</param>
+    /// <param name="timer">Timer countdown for each move.</param>
+    /// <param name="gameLoop">Game loop logic.</param>
     internal void RunMatch(Symbol[] board, string playerName, GameMode mode, TimerOption timer, Action gameLoop)
     {
         this._board = board;
@@ -115,6 +127,7 @@ internal class BoardView
     /// <summary>
     /// Refreshes the board on screen after a move is made.
     /// </summary>
+    /// <param name="currentSymbol">Current symbol</param>
     internal void UpdateBoard(Symbol currentSymbol)
     {
         this._liveContext?.UpdateTarget(this.BuildScreen(-1, currentSymbol, (int)this._timer));
@@ -123,11 +136,16 @@ internal class BoardView
     /// <summary>
     /// Displays the final board state along with the winner or draw banner.
     /// </summary>
+    /// <param name="customMessage">The custom message to print.</param>
     internal void DisplayResult(string customMessage)
     {
         this._liveContext?.UpdateTarget(this.BuildScreen(-1, Symbol.Empty, 0, customMessage));
     }
 
+    /// <summary>
+    /// Gets the player move with arrow keys.
+    /// </summary>
+    /// <returns>The index of the selected cell.</returns>
     internal string GetPlayerName()
     {
         int remainingAttempts = 3;

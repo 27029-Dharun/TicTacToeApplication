@@ -37,7 +37,7 @@ internal class MediumStrategy : IMoveStrategy
 
         if (Random.Shared.Next(100) < 35)
         {
-            return availableCells[Random.Shared.Next(availableCells.Capacity)];
+            return availableCells[Random.Shared.Next(availableCells.Capacity - 1)];
         }
 
         Symbol opponentSymbol = computerSymbol == Symbol.X ? Symbol.O : Symbol.X;
