@@ -1,59 +1,183 @@
 ﻿using TicTacToeApplication.Models.Enums;
 using TicTacToeApplication.Services;
+using TicTacToeApplication.Services.Strategies;
 using TicTacToeApplication.Views;
 
 namespace TicTacToeApplication.Controllers;
 
-/// <summary>
-/// Controls the game flow.
-/// </summary>
 internal class GameController
 {
     private readonly BoardView _boardView;
-    private readonly TicTacToeService _ticTacToeService;
+    private readonly TicTacToeService _gameService;
+    private readonly EasyStrategy _easyStrategy;
+    private readonly ScoreService _scoreService;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GameController"/> class.
-    /// </summary>
-    /// <param name="boardView">Instance of the view layer.</param>
-    /// <param name="ticTacToeService">Instance of the tic-tac-toe game service.</param>
-    public GameController(BoardView boardView, TicTacToeService ticTacToeService)
+    public GameController(BoardView boardView, TicTacToeService gameService, ScoreService scoreService)
     {
         _boardView = boardView;
-        _ticTacToeService = ticTacToeService;
+        _gameService = gameService;
+        _easyStrategy = new EasyStrategy();
+        _scoreService = scoreService;
     }
 
-    /// <summary>
-    /// Start the game by game mode.
-    /// </summary>
-    /// <param name="mode">The mode of the game.</param>
-    /// <param name="timer">The timer option for the game.</param>
-    internal void StartGame(GameMode mode, TimerOption timer)
+    internal void StartGame(GameMode mode, TimerOption timer, string userName)
     {
-        Symbol[] moves = new Symbol[9];
-        Symbol startSymbol = Symbol.X;
-        Symbol currentSymbol = startSymbol;
-
-        while (true)
+        if (mode == GameMode.Manual)
         {
-            Symbol result = _ticTacToeService.IsWinCondition(moves);
-
-            if (result != Symbol.Empty)
-            {
-                _boardView.DisplayResult(result);
-                break;
-            }
-
-            if (_ticTacToeService.IsDraw(moves))
-            {
-                _boardView.DisplayResult(Symbol.Empty);
-                break;
-            }
-
-            int index = _boardView.GetPlayerMove(moves, currentSymbol);
-            moves[index] = currentSymbol;
-
-            currentSymbol = _ticTacToeService.ToggleSymbol(currentSymbol);
+            StartManualGame(timer, userName);
+            return;
         }
+
+        Symbol[] board = Enumerable.Repeat(Symbol.Empty, 9).ToArray();
+        Symbol humanSymbol = Symbol.X;
+        Symbol computerSymbol = Symbol.O;
+        Symbol currentTurn = humanSymbol;
+        bool quitGame = false;
+
+        _boardView.RunMatch(board, userName, mode, timer, () =>
+        {
+            while (true)
+            {
+                if (currentTurn == humanSymbol)
+                {
+                    int move = _boardView.GetPlayerMove(currentTurn);
+
+                    if (move == BoardView.QuitMove)
+                    {
+                        quitGame = true;
+                        break;
+                    }
+
+                    if (move == BoardView.TimeoutMove)
+                    {
+                        _boardView.DisplayResult(computerSymbol, "[bold red]Time's up! Computer wins![/]");
+                        break;
+                    }
+
+                    board[move] = humanSymbol;
+                }
+                else
+                {
+                    int computerMove = GetComputerMove(board, computerSymbol, mode);
+                    board[computerMove] = computerSymbol;
+                }
+
+                _boardView.UpdateBoard(currentTurn);
+
+                Symbol winner = _gameService.IsWinCondition(board);
+                if (winner != Symbol.Empty)
+                {
+                    _boardView.DisplayResult(winner);
+
+                    if (winner == humanSymbol)
+                    {
+                        _scoreService.RecordWin(userName, mode);
+                    }
+                    else
+                    {
+                        _scoreService.RecordLoss(userName);
+                    }
+                        break;
+                }
+
+                if (_gameService.IsDraw(board))
+                {
+                    _boardView.DisplayResult(Symbol.Empty);
+                    _scoreService.RecordDraw(userName);
+                    break;
+                }
+
+                currentTurn = _gameService.ToggleSymbol(currentTurn);
+            }
+        });
+
+        if (quitGame)
+        {
+            Ui.Info("Game discarded.");
+        }
+    }
+
+    private void StartManualGame(TimerOption timer, String userName)
+    {
+
+        Symbol[] board = Enumerable.Repeat(Symbol.Empty, 9).ToArray();
+        Symbol humanSymbol = Symbol.X;
+        Symbol computerSymbol = Symbol.O;
+        Symbol currentTurn = humanSymbol;
+        bool quitGame = false;
+
+        _boardView.RunMatch(board, userName, GameMode.Manual, timer, () =>
+        {
+            while (true)
+            {
+                if (currentTurn == humanSymbol)
+                {
+                    int move = _boardView.GetPlayerMove(currentTurn);
+
+                    if (move == BoardView.QuitMove)
+                    {
+                        quitGame = true;
+                        break;
+                    }
+
+                    if (move == BoardView.TimeoutMove)
+                    {
+                        _boardView.DisplayResult(computerSymbol, "[bold red]Time's up! Computer wins![/]");
+                        break;
+                    }
+
+                    board[move] = humanSymbol;
+                }
+                else
+                {
+                    int move = _boardView.GetPlayerMove(computerSymbol);
+
+                    if (move == BoardView.QuitMove)
+                    {
+                        quitGame = true;
+                        break;
+                    }
+
+                    if (move == BoardView.TimeoutMove)
+                    {
+                        _boardView.DisplayResult(computerSymbol, "[bold red]Time's up! Computer wins![/]");
+                        break;
+                    }
+
+                    board[move] = computerSymbol;
+                }
+
+                _boardView.UpdateBoard(currentTurn);
+
+                Symbol winner = _gameService.IsWinCondition(board);
+                if (winner != Symbol.Empty)
+                {
+                    _boardView.DisplayResult(winner);
+                    break;
+                }
+
+                if (_gameService.IsDraw(board))
+                {
+                    _boardView.DisplayResult(Symbol.Empty);
+                    break;
+                }
+
+                currentTurn = _gameService.ToggleSymbol(currentTurn);
+            }
+        });
+
+        if (quitGame)
+        {
+            Ui.Info("Game discarded.");
+        }
+    }
+    
+    private int GetComputerMove(Symbol[] board, Symbol computerSymbol, GameMode mode)
+    {
+        return mode switch
+        {
+            GameMode.Easy => _easyStrategy.GetNextMove(board, computerSymbol),
+            _ => throw new ArgumentOutOfRangeException(nameof(mode), "Unsupported game mode.")
+        };
     }
 }

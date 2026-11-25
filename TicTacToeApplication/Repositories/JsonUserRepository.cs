@@ -20,13 +20,6 @@ internal class JsonUserRepository : IUserRepository
     {
         _jsonFileManager = jsonFileManager;
         _filePath = path;
-        if (!File.Exists(_filePath))
-        {
-            File.WriteAllText(_filePath, "[]");
-            _users = new List<User>();
-            return;
-        }
-
         _users = _jsonFileManager.LoadAll<User>(_filePath);
     }
 

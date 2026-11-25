@@ -19,12 +19,15 @@ internal class Program
         AuthView authView = new AuthView();
         AuthController authController = new AuthController(authService, authView);
 
+        IScoreRepository scoreRepository = new ScoreRepository(jsonFileManager, "Score.json");
+        ScoreService scoreService = new ScoreService(scoreRepository);
+
         BoardView boardView = new BoardView();
         TicTacToeService ticTacToeService = new TicTacToeService();
-        GameController gameController = new GameController(boardView, ticTacToeService);
+        GameController gameController = new GameController(boardView, ticTacToeService, scoreService);
 
         AppView appView = new AppView();
-        AppController appController = new AppController(authController, appView, gameController);
+        AppController appController = new AppController(authController, appView, gameController, scoreService);
         appController.Run();
     }
 }

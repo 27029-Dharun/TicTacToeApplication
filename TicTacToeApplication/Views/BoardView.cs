@@ -1,99 +1,148 @@
-﻿using Spectre.Console;
+﻿using System.Diagnostics;
+using Spectre.Console;
 using Spectre.Console.Rendering;
 using TicTacToeApplication.Models.Enums;
 
 namespace TicTacToeApplication.Views;
 
-/// <summary>
-/// Handles drawing the Tic-Tac-Toe board, reading player moves.
-/// </summary>
 internal class BoardView
 {
-    /// <summary>
-    /// Lets the current player move around the board using arrow keys and select an empty cell.
-    /// </summary>
-    /// <param name="board">The current state of the 9 board cells.</param>
-    /// <param name="currentPlayerSymbol">The symbol (<see cref="Symbol.X"/> or <see cref="Symbol.O"/>) of the active player.</param>
-    /// <returns>The chosen cell index (0 to 8), or -1 if no empty cells remain.</returns>
-    internal int GetPlayerMove(Symbol[] board, Symbol currentPlayerSymbol)
-    {
-        int selectedIndex = Array.FindIndex(board, c => c == Symbol.Empty);
-        if (selectedIndex == -1)
-        {
-            return -1;
-        }
+    public const int QuitMove = -1;
+    public const int TimeoutMove = -2;
 
-        int chosenIndex = -1;
-
-        AnsiConsole.Live(RenderBoard(board, selectedIndex))
-            .Start(ctx =>
-            {
-                while (chosenIndex == -1)
-                {
-                    ctx.UpdateTarget(RenderBoard(board, selectedIndex));
-
-                    ConsoleKey key = Console.ReadKey(intercept: true).Key;
-
-                    switch (key)
-                    {
-                        case ConsoleKey.UpArrow:
-                            selectedIndex = (selectedIndex - 3 + 9) % 9;
-                            break;
-
-                        case ConsoleKey.DownArrow:
-                            selectedIndex = (selectedIndex + 3) % 9;
-                            break;
-
-                        case ConsoleKey.LeftArrow:
-                            selectedIndex = (selectedIndex - 1 + 9) % 9;
-                            break;
-
-                        case ConsoleKey.RightArrow:
-                            selectedIndex = ++selectedIndex % 9;
-                            break;
-
-                        case ConsoleKey.Enter:
-                        case ConsoleKey.Spacebar:
-                            if (board[selectedIndex] == Symbol.Empty)
-                            {
-                                chosenIndex = selectedIndex;
-                            }
-
-                            break;
-                    }
-                }
-
-                // Render final move without cursor highlight
-                board[chosenIndex] = currentPlayerSymbol;
-                ctx.UpdateTarget(RenderBoard(board, -1));
-            });
-
-        return chosenIndex;
-    }
+    private Symbol[] _board = Array.Empty<Symbol>();
+    private string _playerName;
+    private GameMode _mode;
+    private TimerOption _timer;
+    private LiveDisplayContext? _liveContext;
 
     /// <summary>
-    /// Displays the final outcome of the match as either a win or a draw.
+    /// Starts a live display session for the match.
     /// </summary>
-    /// <param name="result">The winning <see cref="Symbol"/>, or <see cref="Symbol.Empty"/> if the match is a draw.</param>
-    internal void DisplayResult(Symbol result)
+    internal void RunMatch(Symbol[] board, string playerName, GameMode mode, TimerOption timer, Action gameLoop)
     {
-        if (result == Symbol.X || result == Symbol.O)
-        {
-            Ui.Success($"Player with symbol {result} won the match");
-        }
-        else
-        {
-            Ui.Success($"Match Draw");
-        }
-    }
+        _board = board;
+        _playerName = playerName;
+        _mode = mode;
+        _timer = timer;
 
-    private Renderable RenderBoard(Symbol[] symbols, int selectedIndex)
-    {
         AnsiConsole.Clear();
 
-        AnsiConsole.Write(Align.Center(new Markup("[bold aqua] TIC TAC TOE \n[/]")));
+        AnsiConsole.Live(BuildScreen(-1, Symbol.X, (int)timer))
+            .AutoClear(false)
+            .Start(ctx =>
+            {
+                _liveContext = ctx;
+                gameLoop();
+                _liveContext = null;
+            });
+    }
 
-        Table ticTacToeBoard = new Table()
+    /// <summary>
+    /// Reads arrow-key navigation and handles the move timer for the human player.
+    /// </summary>
+    internal int GetPlayerMove(Symbol currentSymbol)
+    {
+        int selectedIndex = Array.FindIndex(_board, cell => cell == Symbol.Empty);
+        if (selectedIndex == -1)
+        {
+            return QuitMove;
+        }
+
+        int timeLimit = (int)_timer;
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        while (true)
+        {
+            int remainingSeconds = timeLimit == 0
+                ? 0
+                : Math.Max(0, (int)Math.Ceiling(timeLimit - stopwatch.Elapsed.TotalSeconds));
+
+            _liveContext?.UpdateTarget(BuildScreen(selectedIndex, currentSymbol, remainingSeconds));
+
+            if (timeLimit > 0 && stopwatch.Elapsed.TotalSeconds >= timeLimit)
+            {
+                return TimeoutMove;
+            }
+
+            if (!Console.KeyAvailable)
+            {
+                Thread.Sleep(50);
+                continue;
+            }
+
+            ConsoleKey key = Console.ReadKey(intercept: true).Key;
+
+            switch (key)
+            {
+                case ConsoleKey.UpArrow:
+                    selectedIndex = (selectedIndex - 3 + 9) % 9;
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    selectedIndex = (selectedIndex + 3) % 9;
+                    break;
+
+                case ConsoleKey.LeftArrow:
+                    selectedIndex = (selectedIndex - 1 + 9) % 9;
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    selectedIndex = (selectedIndex + 1) % 9;
+                    break;
+
+                case ConsoleKey.Escape:
+                    return QuitMove;
+
+                case ConsoleKey.Enter:
+                case ConsoleKey.Spacebar:
+                    if (_board[selectedIndex] == Symbol.Empty)
+                    {
+                        return selectedIndex;
+                    }
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Refreshes the board on screen after a move is made.
+    /// </summary>
+    internal void UpdateBoard(Symbol currentSymbol)
+    {
+        _liveContext?.UpdateTarget(BuildScreen(-1, currentSymbol, (int)_timer));
+    }
+
+    /// <summary>
+    /// Displays the final board state along with the winner or draw banner.
+    /// </summary>
+    internal void DisplayResult(Symbol winner, string? customMessage = null)
+    {
+        string resultText = customMessage ?? winner switch
+        {
+            Symbol.X => $"[bold green]{Markup.Escape(_playerName)} (X) wins the match![/]",
+            Symbol.O => "[bold red]Computer (O) wins the match![/]",
+            _ => "[bold yellow]It's a draw![/]"
+        };
+
+        _liveContext?.UpdateTarget(BuildScreen(-1, Symbol.Empty, 0, resultText));
+    }
+
+    private IRenderable BuildScreen( int selectedIndex, Symbol currentTurn, int remainingSeconds, string? result = null)
+    {
+        var header = new Markup(
+            $"[bold aqua]TIC TAC TOE[/]\n" +
+            $"Player: [green]{Markup.Escape(_playerName)}[/]  [grey]|[/]  " +
+            $"Mode: [yellow]{_mode}[/]");
+
+        string statusLine = result ?? (
+            _timer == TimerOption.None
+                ? $"Turn: [bold]{currentTurn}[/]  [grey](Arrows to move, Enter to place, Esc to quit)[/]"
+                : $"Turn: [bold]{currentTurn}[/]  [grey]|[/]  Time Left: [bold yellow]{remainingSeconds}s[/]");
+
+        var status = new Markup(statusLine);
+
+        Table table = new Table()
             .Border(TableBorder.Heavy)
             .BorderColor(Color.Aqua)
             .HideHeaders()
@@ -101,18 +150,22 @@ internal class BoardView
 
         for (int i = 0; i < 3; i++)
         {
-            ticTacToeBoard.AddColumn(new TableColumn(" ").Centered().Padding(1, 0));
+            table.AddColumn(new TableColumn(" ").Centered().Padding(1, 0));
         }
 
-        for (int i = 0; i < symbols.Length; i += 3)
+        for (int i = 0; i < _board.Length; i += 3)
         {
-            ticTacToeBoard.AddRow(
-                FormatCell(symbols[i], i == selectedIndex),
-                FormatCell(symbols[i + 1], i + 1 == selectedIndex),
-                FormatCell(symbols[i + 2], i + 2 == selectedIndex));
+            table.AddRow(
+                FormatCell(_board[i], i == selectedIndex),
+                FormatCell(_board[i + 1], i + 1 == selectedIndex),
+                FormatCell(_board[i + 2], i + 2 == selectedIndex));
         }
 
-        return Align.Center(ticTacToeBoard);
+        return Align.Center(new Rows(Align.Center(header),
+            new Text(""),
+            Align.Center(table),
+            new Text(""),
+            Align.Center(status)));
     }
 
     private string FormatCell(Symbol symbol, bool isSelected)
@@ -122,7 +175,7 @@ internal class BoardView
 
         if (isSelected)
         {
-            return $"[black on grey]{padded}[/]";
+            return $"[black on aqua]{padded}[/]";
         }
 
         return symbol switch

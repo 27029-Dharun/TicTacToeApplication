@@ -8,15 +8,15 @@ internal enum TimerOption
     /// <summary>
     /// Represents a option to start a game without timer.
     /// </summary>
-    None = 1,
+    None = 0,
 
     /// <summary>
     /// Represents a option to start a game with 5 second timer.
     /// </summary>
-    FiveSecond,
+    FiveSecond = 5,
 
     /// <summary>
     /// Represents a option to start a game with 10 second timer.
     /// </summary>
-    TenSecond,
+    TenSecond = 10,
 }

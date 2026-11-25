@@ -13,7 +13,7 @@ internal enum Symbol
     /// <summary>
     /// Represents a cell with symbol 'X'.
     /// </summary>
-    X = 1,
+    X,
 
     /// <summary>
     /// Represents a cell with symbol 'O'.

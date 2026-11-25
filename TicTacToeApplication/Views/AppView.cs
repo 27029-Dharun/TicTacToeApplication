@@ -14,11 +14,11 @@ internal class AppView
     /// </summary>
     /// <param name="session">The current logged-in user session.</param>
     /// <returns>The selected <see cref="MainMenuOption"/>.</returns>
-    internal MainMenuOption GetMenuOption(UserSession session)
+    internal MainMenuOption GetMenuOption(UserSession session, int totalPoints, int wins)
     {
         AnsiConsole.Clear();
 
-        Banner("MAIN MENU", session);
+        Banner("MAIN MENU", session.UserName, totalPoints, wins);
 
         var mainMenu = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
@@ -66,14 +66,13 @@ internal class AppView
     /// </summary>
     /// <param name="title">The heading text to show on the banner.</param>
     /// <param name="session">The current user session containing player details.</param>
-    internal void Banner(string title, UserSession session)
+    internal void Banner(string title, string userName, int totalPoints, int wins)
     {
         var playerInfo = new Panel(Align.Center(
             new Markup(
-                $"[grey]Hello[/] [bold green]{Markup.Escape(session.UserName)}[/]\n" +
-                $"[grey]Total point[/] [bold yellow]30 [/]" +
-                $"[grey]Rank[/] [bold yellow] #5 [/]" +
-                $"[bold green] 14 wins [/]")))
+                $"[grey]Hello[/] [bold green]{Markup.Escape(userName)}[/]\n" +
+                $"[grey]Total point[/] [bold yellow]{totalPoints} [/]" +
+                $"[bold green] {wins} wins [/]")))
             .Header("[bold aqua]" + title + "[/]", Justify.Center)
             .Border(BoxBorder.Rounded)
             .BorderStyle(Color.Aqua)
@@ -104,5 +103,68 @@ internal class AppView
             "Ten second per move" => TimerOption.TenSecond,
             _ => throw new InvalidOperationException("Invalid choice")
         };
+    }
+
+    internal void DisplayLeaderBoard(string userName, List<(string Username, int TotalPoints, int Wins)> leaderboard)
+    {
+        AnsiConsole.Clear();
+        Ui.Title("LEADERBOARD (TOP 20)");
+
+        if (leaderboard.Count == 0)
+        {
+            Ui.Info("No scores recorded yet.\n");
+            Ui.Pause();
+            return;
+        }
+
+        Table table = new Table()
+            .Border(TableBorder.Rounded)
+            .BorderColor(Color.Aqua);
+
+        table.AddColumn(new TableColumn("[bold yellow]Rank[/]").Centered());
+        table.AddColumn(new TableColumn("[bold yellow]Username[/]").LeftAligned());
+        table.AddColumn(new TableColumn("[bold yellow]Total Points[/]").Centered());
+        table.AddColumn(new TableColumn("[bold yellow]Wins[/]").Centered());
+
+        for (int i = 0; i < leaderboard.Count; i++)
+        {
+            var entry = leaderboard[i];
+            int rank = i + 1;
+            bool isCurrentUser = entry.Username.Equals(userName, StringComparison.OrdinalIgnoreCase);
+
+            if (isCurrentUser)
+            {
+                table.AddRow(
+                    $"[aqua] #{rank} [/]",
+                    $"[aqua] {Markup.Escape(entry.Username)} (You) [/]",
+                    $"[aqua] {entry.TotalPoints} [/]",
+                    $"[aqua] {entry.Wins} [/]");
+            }
+            else
+            {
+                string rankColor = rank switch
+                {
+                    1 => "bold gold1",
+                    2 => "bold silver",
+                    3 => "bold darkorange3",
+                    _ => "grey"
+                };
+
+                table.AddRow(
+                    $"[{rankColor}]#{rank}[/]",
+                    Markup.Escape(entry.Username),
+                    $"[yellow]{entry.TotalPoints}[/]",
+                    $"[green]{entry.Wins}[/]");
+            }
+        }
+
+        AnsiConsole.Write(table);
+        AnsiConsole.WriteLine();
+        Ui.Pause();
+    }
+
+    internal void DisplayProfile(Score score)
+    {
+        Ui.Title("Profile Page");
     }
 }
