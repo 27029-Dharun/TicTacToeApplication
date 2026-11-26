@@ -111,7 +111,7 @@ internal class AppController
         List<GameRecord> gameRecords = this._gameService.GetGameReplay(session);
         this._appView.DisplayHistory(gameRecords, session);
 
-        int gameNumber = this._appView.GetGameToReplay();
+        int gameNumber = this._appView.GetGameToReplay(gameRecords.Capacity);
 
         this._boardView.ReplayGame(gameRecords[gameNumber - 1]);
     }

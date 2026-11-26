@@ -1,6 +1,7 @@
 ﻿using TicTacToe.Models;
 using TicTacToe.Models.Enums;
 using TicTacToe.Repositories;
+using TicTacToe.Repositories.Interfaces;
 
 namespace TicTacToe.Services;
 
@@ -188,9 +189,20 @@ internal class GameService
     internal void CompleteAndSaveGame(GameRecord game, EndReason endReason, string? winnerName, UserSession playerOneSession, UserSession? playerTwoSession = null)
     {
         game.EndReason = endReason;
-        game.WinnerName = winnerName is not null ? winnerName : string.Empty;
+        game.WinnerName = winnerName ?? string.Empty;
 
         this.AddGameRecord(playerOneSession, game);
+
+        if (playerTwoSession is not null)
+        {
+            IGameRepository playerOneRepo = this._repositorySelector.GetGameRepository(playerOneSession);
+            IGameRepository playerTwoRepo = this._repositorySelector.GetGameRepository(playerTwoSession);
+
+            if (!ReferenceEquals(playerOneRepo, playerTwoRepo))
+            {
+                playerTwoRepo.AddGameRecord(game);
+            }
+        }
     }
 
     /// <summary>

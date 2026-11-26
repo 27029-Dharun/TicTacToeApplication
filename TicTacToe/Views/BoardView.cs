@@ -159,12 +159,11 @@ internal class BoardView
                     ? gameRecord.PlayerOneName
                     : gameRecord.PlayerTwoName;
 
-                AnsiConsole.MarkupLine($"[grey]Move {moveIndex + 1}/{gameRecord.Moves.Count} | {playerName} - {currentMove.Symbol} {currentMove.Timestamp}\n[/]");
-                AnsiConsole.MarkupLine($"Press [white]->[/] for next, [white]<-[/] for previous, or [white]Q[/] to exit[/]");
+                AnsiConsole.MarkupLine($"[grey]Move {moveIndex + 1}/{gameRecord.Moves.Count} | {playerName} - {currentMove.Symbol} {currentMove.Timestamp}[/]");
 
-                ConsoleKey key = Console.ReadKey(intercept: true).Key;
+                ConsoleKey key = Console.ReadKey().Key;
 
-                if (key == ConsoleKey.Escape)
+                if (key == ConsoleKey.Escape || key == ConsoleKey.Q)
                 {
                     return;
                 }

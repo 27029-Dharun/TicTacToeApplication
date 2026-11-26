@@ -42,13 +42,14 @@ internal class AppView
     /// <summary>
     /// Gets the game to replay.
     /// </summary>
+    /// <param name="length">The number of games available.</param>
     /// <returns>The game record selected.</returns>
-    internal int GetGameToReplay()
+    internal int GetGameToReplay(int length)
     {
         return AnsiConsole.Prompt(new TextPrompt<int>("Enter an game number to watch replay:")
             .Validate(n =>
             {
-                if (n < 1 || n > 10)
+                if (n < 1 || n > length)
                 {
                     return ValidationResult.Error("[red]Number must be between 1 and 100[/]");
                 }
