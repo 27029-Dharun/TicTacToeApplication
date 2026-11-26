@@ -135,6 +135,74 @@ internal class BoardView
     }
 
     /// <summary>
+    /// Replays the game with the records.
+    /// </summary>
+    /// <param name="gameRecord">The game records to be played.</param>
+    internal void ReplayGame(GameRecord gameRecord)
+    {
+        if (gameRecord.Moves == null || gameRecord.Moves.Count == 0)
+        {
+            AnsiConsole.MarkupLine("[yellow]No moves recorded for this game.[/]");
+            return;
+        }
+
+        Symbol[] board = Enumerable.Repeat(Symbol.Empty, 9).ToArray();
+
+        this.RunMatch(board, gameRecord, () =>
+        {
+            int moveIndex = 0;
+
+            while (moveIndex < gameRecord.Moves.Count)
+            {
+                var currentMove = gameRecord.Moves[moveIndex];
+                string playerName = currentMove.Symbol == gameRecord.PlayerOneSymbol
+                    ? gameRecord.PlayerOneName
+                    : gameRecord.PlayerTwoName;
+
+                AnsiConsole.MarkupLine($"[grey]Move {moveIndex + 1}/{gameRecord.Moves.Count} | {playerName} - {currentMove.Symbol} {currentMove.Timestamp}\n");
+                AnsiConsole.MarkupLine($"Press [white]->[/] for next, [white]<-[/] for previous, or [white]Q[/] to exit[/]");
+
+                ConsoleKey key = Console.ReadKey(intercept: true).Key;
+
+                if (key == ConsoleKey.Escape)
+                {
+                    return;
+                }
+
+                if (key == ConsoleKey.RightArrow)
+                {
+                    board[currentMove.Cell] = currentMove.Symbol;
+
+                    Symbol nextTurn = (moveIndex + 1 < gameRecord.Moves.Count)
+                        ? gameRecord.Moves[moveIndex + 1].Symbol
+                        : currentMove.Symbol;
+
+                    this.UpdateBoard(nextTurn);
+                    moveIndex++;
+                }
+                else if (key == ConsoleKey.LeftArrow && moveIndex > 0)
+                {
+                    moveIndex--;
+                    var previousMove = gameRecord.Moves[moveIndex];
+                    board[previousMove.Cell] = Symbol.Empty;
+
+                    this.UpdateBoard(previousMove.Symbol);
+                }
+            }
+
+            string outcomeText = string.IsNullOrWhiteSpace(gameRecord.WinnerName)
+                ? "[bold yellow]Match ended in a Draw![/]"
+                : $"[bold green]{Markup.Escape(gameRecord.WinnerName)} won the match![/]";
+
+            string reasonText = gameRecord.EndReason != default
+                ? $" [grey](Reason: {gameRecord.EndReason})[/]"
+                : string.Empty;
+
+            this.DisplayResult($"{outcomeText}{reasonText}");
+        });
+    }
+
+    /// <summary>
     /// Refreshes the board on screen after a move is made.
     /// </summary>
     /// <param name="currentSymbol">Current symbol</param>

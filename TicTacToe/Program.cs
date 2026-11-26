@@ -35,7 +35,7 @@ internal class Program
         GameController gameController = new GameController(boardView, gameService, scoreService, authController);
 
         AppView appView = new AppView();
-        AppController appController = new AppController(authController, appView, gameController, scoreService, gameService);
+        AppController appController = new AppController(authController, appView, gameController, scoreService, gameService, boardView);
         appController.Run();
     }
 }

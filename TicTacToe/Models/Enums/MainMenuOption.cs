@@ -29,4 +29,5 @@ internal enum MainMenuOption
     /// Represents a option to logout from the application.
     /// </summary>
     Logout,
+    MatchReplay,
 }

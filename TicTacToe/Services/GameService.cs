@@ -25,12 +25,26 @@ internal class GameService
     /// </summary>
     /// <param name="session">The user session of the user.</param>
     /// <returns>The list of game record.</returns>
-    internal List<GameRecord> GetGameRecords(UserSession session)
+    internal List<GameRecord> GetGameHistory(UserSession session)
     {
         return this._repositorySelector.GetGameRepository(session)
             .GetByUserName(session.UserName)
             .OrderByDescending(x => x.PlayedAt)
             .Take(100)
+            .ToList();
+    }
+
+    /// <summary>
+    /// Gets the game replay.
+    /// </summary>
+    /// <param name="session">The game session of the user.</param>
+    /// <returns>List of the game record.</returns>
+    internal List<GameRecord> GetGameReplay(UserSession session)
+    {
+        return this._repositorySelector.GetGameRepository(session)
+            .GetByUserName(session.UserName)
+            .OrderByDescending(x => x.PlayedAt)
+            .Take(10)
             .ToList();
     }
 

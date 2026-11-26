@@ -25,17 +25,36 @@ internal class AppView
         var mainMenu = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Select an option to continue")
-                    .AddChoices("Play New Game", "History", "Profile", "Leaderboard", "Logout"));
+                    .AddChoices("Play New Game", "History", "Match Replay", "Profile", "Leaderboard", "Logout"));
 
         return mainMenu switch
         {
             "Play New Game" => MainMenuOption.NewGame,
             "History" => MainMenuOption.History,
+            "Match Replay" => MainMenuOption.MatchReplay,
             "Profile" => MainMenuOption.Profile,
             "Leaderboard" => MainMenuOption.LeaderBoard,
             "Logout" => MainMenuOption.Logout,
             _ => throw new InvalidOperationException("Invalid choice")
         };
+    }
+
+    /// <summary>
+    /// Gets the game to replay.
+    /// </summary>
+    /// <returns>The game record selected.</returns>
+    internal int GetGameToReplay()
+    {
+        return AnsiConsole.Prompt(new TextPrompt<int>("Enter an game number to watch replay:")
+            .Validate(n =>
+            {
+                if (n < 1 || n > 10)
+                {
+                    return ValidationResult.Error("[red]Number must be between 1 and 100[/]");
+                }
+
+                return ValidationResult.Success();
+            }));
     }
 
     /// <summary>
@@ -153,7 +172,7 @@ internal class AppView
             {
                 string rankColor = rank switch
                 {
-                    1 => "bold gold",
+                    1 => "bold gold1",
                     2 => "bold silver",
                     3 => "bold yellow",
                     _ => "grey"
@@ -161,7 +180,7 @@ internal class AppView
 
                 table.AddRow(
                     $"[{rankColor}]#{rank}[/]",
-                    Markup.Escape(entry.Username),
+                    $"[white]{entry.Username}[/]",
                     $"[yellow]{entry.TotalPoints}[/]",
                     $"[green]{entry.Wins}[/]");
             }

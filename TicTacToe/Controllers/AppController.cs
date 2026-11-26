@@ -15,6 +15,7 @@ internal class AppController
     private readonly GameController _gameController;
     private readonly ScoreService _scoreService;
     private readonly GameService _gameService;
+    private readonly BoardView _boardView;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AppController"/> class.
@@ -24,13 +25,15 @@ internal class AppController
     /// <param name="gameController">Instance of the game controller.</param>
     /// <param name="scoreService">Instance of the score service.</param>
     /// <param name="gameService">Instance of game services.</param>
-    public AppController(AuthController authController, AppView appView, GameController gameController, ScoreService scoreService, GameService gameService)
+    /// <param name="boardView">Instance of the board view.</param>
+    public AppController(AuthController authController, AppView appView, GameController gameController, ScoreService scoreService, GameService gameService, BoardView boardView)
     {
         this._authController = authController;
         this._appView = appView;
         this._gameController = gameController;
         this._scoreService = scoreService;
         this._gameService = gameService;
+        this._boardView = boardView;
     }
 
     /// <summary>
@@ -67,6 +70,10 @@ internal class AppController
                     this.DisplayHistory(session);
                     break;
 
+                case MainMenuOption.MatchReplay:
+                    this.HandleReplay(session);
+                    break;
+
                 case MainMenuOption.Profile:
                     this.DisplayProfile(session);
                     break;
@@ -99,9 +106,19 @@ internal class AppController
         }
     }
 
+    private void HandleReplay(UserSession session)
+    {
+        List<GameRecord> gameRecords = this._gameService.GetGameReplay(session);
+        this._appView.DisplayHistory(gameRecords, session);
+
+        int gameNumber = this._appView.GetGameToReplay();
+
+        this._boardView.ReplayGame(gameRecords[gameNumber - 1]);
+    }
+
     private void DisplayHistory(UserSession session)
     {
-        List<GameRecord> gameRecords = this._gameService.GetGameRecords(session);
+        List<GameRecord> gameRecords = this._gameService.GetGameHistory(session);
         this._appView.DisplayHistory(gameRecords, session);
     }
 
