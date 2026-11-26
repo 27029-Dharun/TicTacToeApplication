@@ -3,29 +3,79 @@
 namespace TicTacToe.Models;
 
 /// <summary>
-/// Represents a completed Tic Tac Toe game.
+/// Game record played.
 /// </summary>
 internal class GameRecord
 {
+    /// <summary>
+    /// Gets or sets the unique identifier for the game record.
+    /// </summary>
+    /// <value>The unique identifier for the game record.</value>
     public Guid GameId { get; set; } = Guid.NewGuid();
 
-    public string Username { get; set; } = string.Empty;
+    /// <summary>
+    /// Gets or sets the player names for the game record.
+    /// </summary>
+    /// <value>The name of the player.</value>
+    public string PlayerOneName { get; set; } = string.Empty;
 
-    public string Opponent { get; set; } = string.Empty;
+    /// <summary>
+    /// Gets or sets opponent player name for the game record.
+    /// </summary>
+    /// <value>The name of the opponent player.</value>
+    public string PlayerTwoName { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the symbol used by Player One in the game.
+    /// </summary>
+    /// <value>The symbol used by Player One.</value>
+    public Symbol PlayerOneSymbol { get; set; }
+
+    /// <summary>
+    /// Gets or sets the symbol used by Player Two in the game.
+    /// </summary>
+    /// <value>The symbol used by Player Two.</value>
+    public Symbol PlayerTwoSymbol { get; set; }
+
+    /// <summary>
+    /// Gets or sets the game mode for the game record.
+    /// </summary>
+    /// <value>The game mode for the game record.</value>
     public GameMode Mode { get; set; }
 
-    public DateTime PlayedAt { get; set; }
+    /// <summary>
+    /// Gets or sets the date and time when the game was played.
+    /// </summary>
+    /// <value>The date and time when the game was played.</value>
+    public DateTime PlayedAt { get; set; } = DateTime.Now;
 
-    public Symbol MyMark { get; set; }
-
-    public Symbol FirstMark { get; set; }
-
+    /// <summary>
+    /// Gets or sets the result of the game.
+    /// </summary>
+    /// <value>The result of the game.</value>
     public GameResult Result { get; set; }
 
+    /// <summary>
+    /// Gets or sets the name of the winner of the game.
+    /// </summary>
+    /// <value>The name of the winner of the game.</value>
+    public string WinnerName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the time limit for each move in seconds.
+    /// </summary>
+    /// <value>The time limit for each move in seconds.</value>
     public TimerOption TimeLimitSeconds { get; set; }
 
+    /// <summary>
+    /// Gets or sets the reason for the game ending.
+    /// </summary>
+    /// <value>The reason for the game ending.</value>
     public EndReason EndReason { get; set; }
 
+    /// <summary>
+    /// Gets or sets the list of moves made during the game.
+    /// </summary>
+    /// <value>The list of moves made during the game.</value>
     public List<MoveRecord> Moves { get; set; } = new List<MoveRecord>();
 }

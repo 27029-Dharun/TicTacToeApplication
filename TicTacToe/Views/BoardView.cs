@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Spectre.Console;
 using Spectre.Console.Rendering;
+using TicTacToe.Models;
 using TicTacToe.Models.Enums;
 using TicTacToe.Validators;
 
@@ -22,7 +23,10 @@ internal class BoardView
     public const int TimeoutMove = -2;
 
     private Symbol[] _board = Array.Empty<Symbol>();
-    private string _playerName = string.Empty;
+    private string _firstPlayerName = string.Empty;
+    private string _secondPlayerName = string.Empty;
+    private Symbol _firstPlayerSymbol;
+    private Symbol _secondPlayerSymbol;
     private GameMode _mode;
     private TimerOption _timer;
     private LiveDisplayContext? _liveContext;
@@ -31,20 +35,21 @@ internal class BoardView
     /// Starts a live display session for the match.
     /// </summary>
     /// <param name="board">The board state.</param>
-    /// <param name="playerName">Player name.</param>
-    /// <param name="mode">Mode of the game.</param>
-    /// <param name="timer">Timer countdown for each move.</param>
+    /// <param name="game">Game record name.</param>
     /// <param name="gameLoop">Game loop logic.</param>
-    internal void RunMatch(Symbol[] board, string playerName, GameMode mode, TimerOption timer, Action gameLoop)
+    internal void RunMatch(Symbol[] board, GameRecord game, Action gameLoop)
     {
         this._board = board;
-        this._playerName = playerName;
-        this._mode = mode;
-        this._timer = timer;
+        this._firstPlayerName = game.PlayerOneName;
+        this._secondPlayerName = game.PlayerTwoName;
+        this._firstPlayerSymbol = game.PlayerOneSymbol;
+        this._secondPlayerSymbol = game.PlayerTwoSymbol;
+        this._mode = game.Mode;
+        this._timer = game.TimeLimitSeconds;
 
         AnsiConsole.Clear();
 
-        AnsiConsole.Live(this.BuildScreen(-1, Symbol.X, (int)timer))
+        AnsiConsole.Live(this.BuildScreen(-1, Symbol.X, (int)game.TimeLimitSeconds))
             .Start(ctx =>
             {
                 this._liveContext = ctx;
@@ -71,9 +76,15 @@ internal class BoardView
 
         while (true)
         {
-            int remainingSeconds = timeLimit == 0
-                ? 0
-                : Math.Max(0, (int)Math.Ceiling(timeLimit - stopwatch.Elapsed.TotalSeconds));
+            int remainingSeconds;
+            if (timeLimit == 0)
+            {
+                remainingSeconds = 0;
+            }
+            else
+            {
+                remainingSeconds = Math.Max(0, (int)Math.Ceiling(timeLimit - stopwatch.Elapsed.TotalSeconds));
+            }
 
             this._liveContext?.UpdateTarget(this.BuildScreen(selectedIndex, currentSymbol, remainingSeconds));
 
@@ -170,17 +181,42 @@ internal class BoardView
         return password;
     }
 
+    /// <summary>
+    /// Asks the user if they want to play again after a game ends.
+    /// </summary>
+    /// <returns>True if the user want to play again;otherwise, false.</returns>
+    internal bool AskPlayAgain()
+    {
+        AnsiConsole.WriteLine();
+
+        string choice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("What do you want to do?")
+                .AddChoices("Play Again", "Exit"));
+
+        if (choice == "Play Again")
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private IRenderable BuildScreen(int selectedIndex, Symbol currentTurn, int remainingSeconds, string? result = null)
     {
+        string firstColor = this._firstPlayerSymbol == Symbol.X ? "bold aqua" : "bold yellow";
+        string secondColor = this._secondPlayerSymbol == Symbol.X ? "bold aqua" : "bold yellow";
+
         var header = new Markup(
-            $"[bold aqua]TIC TAC TOE[/]\n" +
-            $"[green]{Markup.Escape(this._playerName)}()[/] Vs  " +
-            $"Mode: [yellow]{this._mode}[/]");
+            $"[bold aqua]TIC TAC TOE[/]\n\n" +
+            $"[{firstColor}]{Markup.Escape(this._firstPlayerName)}({this._firstPlayerSymbol})[/] Vs " +
+            $"[{secondColor}]{Markup.Escape(this._secondPlayerName)}({this._secondPlayerSymbol})[/]\n" +
+            $"[grey]{this._mode}[/]");
 
         string statusLine = result ?? (
             this._timer == TimerOption.None
-                ? $"Turn: [bold]{currentTurn}[/]  [grey](Arrows to move, Enter to place, Esc to quit)[/]"
-                : $"Turn: [bold]{currentTurn}[/]  [grey] | [/]  Time Left: [bold yellow]{remainingSeconds}s[/]");
+                ? $"Turn: [bold]{currentTurn}[/]\n\n[grey]Q to quit[/]"
+                : $"Turn: [bold]{currentTurn}[/]  [grey] | [/]  Time Left: [bold yellow]{remainingSeconds}s[/]\n\n[grey]Q to quit[/]");
 
         var status = new Markup(statusLine);
 

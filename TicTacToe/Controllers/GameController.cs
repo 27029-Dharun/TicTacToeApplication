@@ -42,37 +42,57 @@ internal class GameController
     /// <param name="session">User session.</param>
     internal void StartGame(GameMode mode, TimerOption timer, UserSession session)
     {
-        if (mode == GameMode.Manual)
+        bool playAgain = true;
+        while (playAgain)
         {
-            this.StartManualGame(timer, session);
-            return;
-        }
+            GameRecord game = new GameRecord()
+            {
+                PlayerOneName = session.UserName,
+                Mode = mode,
+                PlayedAt = DateTime.Now,
+                TimeLimitSeconds = timer,
+            };
 
+            if (session.IsStart)
+            {
+                game.PlayerOneSymbol = Symbol.X;
+                game.PlayerTwoSymbol = Symbol.O;
+                session.IsStart = false;
+            }
+            else
+            {
+                game.PlayerOneSymbol = Symbol.O;
+                game.PlayerTwoSymbol = Symbol.X;
+                session.IsStart = true;
+            }
+
+            if (mode == GameMode.Manual)
+            {
+                this.StartManualGame(game, session);
+            }
+            else
+            {
+                this.StartComputerGame(game, session);
+            }
+
+            playAgain = this._boardView.AskPlayAgain();
+        }
+    }
+
+    private void StartComputerGame(GameRecord game, UserSession session)
+    {
         Symbol[] board = Enumerable.Repeat(Symbol.Empty, 9).ToArray();
-        Symbol humanSymbol;
-        Symbol computerSymbol;
-        Symbol currentTurn = Symbol.X;
 
-        if (session.IsStart)
-        {
-            humanSymbol = Symbol.X;
-            computerSymbol = Symbol.O;
-            session.IsStart = false;
-        }
-        else
-        {
-            humanSymbol = Symbol.O;
-            computerSymbol = Symbol.X;
-            session.IsStart = true;
-        }
+        game.PlayerTwoName = "Computer";
+        Symbol currentTurn = Symbol.X;
 
         bool quitGame = false;
 
-        this._boardView.RunMatch(board, session.UserName, mode, timer, () =>
+        this._boardView.RunMatch(board, game, () =>
         {
             while (true)
             {
-                if (currentTurn == humanSymbol)
+                if (currentTurn == game.PlayerOneSymbol)
                 {
                     int move = this._boardView.GetPlayerMove(currentTurn);
 
@@ -88,13 +108,13 @@ internal class GameController
                         break;
                     }
 
-                    board[move] = humanSymbol;
+                    board[move] = game.PlayerOneSymbol;
                 }
                 else
                 {
-                    int computerMove = this.GetComputerMove(board, computerSymbol, mode);
+                    int computerMove = this.GetComputerMove(board, game.PlayerTwoSymbol, game.Mode);
                     Thread.Sleep(500);
-                    board[computerMove] = computerSymbol;
+                    board[computerMove] = game.PlayerTwoSymbol;
                 }
 
                 this._boardView.UpdateBoard(currentTurn);
@@ -102,15 +122,15 @@ internal class GameController
                 Symbol winner = this._gameService.IsWinCondition(board);
                 if (winner != Symbol.Empty)
                 {
-                    if (winner == humanSymbol)
+                    if (winner == game.PlayerOneSymbol)
                     {
-                        this._scoreService.RecordWin(session.UserName, mode, session);
-                        this._boardView.DisplayResult($"[bold green]You({humanSymbol}) won the match![/]");
+                        this._scoreService.RecordWin(session.UserName, game.Mode, session);
+                        this._boardView.DisplayResult($"[bold green]You({game.PlayerOneSymbol}) won the match![/]");
                     }
                     else
                     {
                         this._scoreService.RecordLoss(session.UserName, session);
-                        this._boardView.DisplayResult($"[bold red]Computer({computerSymbol}) won the match![/]");
+                        this._boardView.DisplayResult($"[bold red]Computer({game.PlayerTwoSymbol}) won the match![/]");
                     }
 
                     break;
@@ -133,38 +153,23 @@ internal class GameController
         }
     }
 
-    private void StartManualGame(TimerOption timer, UserSession session)
+    private void StartManualGame(GameRecord game, UserSession session)
     {
         GameMode mode = GameMode.Manual;
         Symbol[] board = Enumerable.Repeat(Symbol.Empty, 9).ToArray();
-        Symbol firstPlayerSymbol;
-        Symbol secondPlayerSymbol;
         Symbol currentTurn = Symbol.X;
 
-        string secondPlayerName = this._boardView.GetPlayerName();
-
-        if (session.IsStart)
-        {
-            firstPlayerSymbol = Symbol.X;
-            secondPlayerSymbol = Symbol.O;
-            session.IsStart = false;
-        }
-        else
-        {
-            firstPlayerSymbol = Symbol.O;
-            secondPlayerSymbol = Symbol.X;
-            session.IsStart = true;
-        }
+        game.PlayerTwoName = this._boardView.GetPlayerName();
 
         bool quitGame = false;
 
-        this._boardView.RunMatch(board, session.UserName, GameMode.Manual, timer, () =>
+        this._boardView.RunMatch(board, game, () =>
         {
             while (true)
             {
-                if (currentTurn == firstPlayerSymbol)
+                if (currentTurn == game.PlayerOneSymbol)
                 {
-                    int move = this._boardView.GetPlayerMove(currentTurn);
+                    int move = this._boardView.GetPlayerMove(game.PlayerOneSymbol);
 
                     if (move == BoardView.QuitMove)
                     {
@@ -174,15 +179,15 @@ internal class GameController
 
                     if (move == BoardView.TimeoutMove)
                     {
-                        this._boardView.DisplayResult($"[bold red]Time's up! {secondPlayerName} wins![/]");
+                        this._boardView.DisplayResult($"[bold red]Time's up! {game.PlayerTwoName} wins![/]");
                         break;
                     }
 
-                    board[move] = firstPlayerSymbol;
+                    board[move] = game.PlayerOneSymbol;
                 }
                 else
                 {
-                    int move = this._boardView.GetPlayerMove(secondPlayerSymbol);
+                    int move = this._boardView.GetPlayerMove(game.PlayerTwoSymbol);
 
                     if (move == BoardView.QuitMove)
                     {
@@ -192,11 +197,11 @@ internal class GameController
 
                     if (move == BoardView.TimeoutMove)
                     {
-                        this._boardView.DisplayResult($"[bold red]Time's up! {session.UserName} wins![/]");
+                        this._boardView.DisplayResult($"[bold red]Time's up! {game.PlayerOneName} wins![/]");
                         break;
                     }
 
-                    board[move] = secondPlayerSymbol;
+                    board[move] = game.PlayerTwoSymbol;
                 }
 
                 this._boardView.UpdateBoard(currentTurn);
@@ -204,15 +209,15 @@ internal class GameController
                 Symbol winner = this._gameService.IsWinCondition(board);
                 if (winner != Symbol.Empty)
                 {
-                    if (winner == firstPlayerSymbol)
+                    if (winner == game.PlayerOneSymbol)
                     {
-                        this._scoreService.RecordWin(session.UserName, mode, session);
-                        this._boardView.DisplayResult($"[bold green]{session.UserName}({firstPlayerSymbol}) won the match![/]");
+                        this._scoreService.RecordWin(game.PlayerOneName, mode, session);
+                        this._boardView.DisplayResult($"[bold green]{session.UserName}({game.PlayerOneSymbol}) won the match![/]");
                     }
                     else
                     {
                         this._scoreService.RecordLoss(session.UserName, session);
-                        this._boardView.DisplayResult($"[bold red]{secondPlayerName}({secondPlayerSymbol}) won the match![/]");
+                        this._boardView.DisplayResult($"[bold red]{game.PlayerTwoName}({game.PlayerTwoSymbol}) won the match![/]");
                     }
 
                     break;
