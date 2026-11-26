@@ -197,7 +197,7 @@ internal class AppView
         .AddItem("Hard", score.PointsByMode.GetValueOrDefault(GameMode.Hard), Color.Red)
         .AddItem("Manual", score.PointsByMode.GetValueOrDefault(GameMode.Manual), Color.Aqua);
 
-        AnsiConsole.Write(chart);
+        AnsiConsole.Write(Align.Center(chart));
     }
 
     /// <summary>
@@ -216,5 +216,84 @@ internal class AppView
     internal void DisplayInfo(string message)
     {
         Ui.Info(message);
+    }
+
+    /// <summary>
+    /// Displays the top 100 game history.
+    /// </summary>
+    /// <param name="gameRecords">The list of game records.</param>
+    /// <param name="session">User session</param>
+    internal void DisplayHistory(List<GameRecord> gameRecords, UserSession session)
+    {
+        Ui.Title("HISTORY");
+
+        if (gameRecords == null || !gameRecords.Any())
+        {
+            AnsiConsole.MarkupLine("[yellow]No game history found.[/]");
+            return;
+        }
+
+        var table = new Table()
+            .Border(TableBorder.Rounded)
+            .AddColumn("Game No")
+            .AddColumn("Date")
+            .AddColumn("Opponent")
+            .AddColumn("Result")
+            .AddColumn("Mode")
+            .AddColumn("Score");
+
+        int i = 1;
+
+        foreach (var game in gameRecords.OrderByDescending(g => g.PlayedAt).Take(100))
+        {
+            string opponent = game.PlayerOneName == session.UserName ? game.PlayerTwoName : game.PlayerOneName;
+            string result;
+            int score = 0;
+
+            if (game.EndReason == EndReason.Quit)
+            {
+                result = "[grey]QUIT[/]";
+                score = 0;
+            }
+            else if (string.IsNullOrWhiteSpace(game.WinnerName))
+            {
+                result = "[yellow]DRAW[/]";
+                score = 1;
+            }
+            else if (game.WinnerName == session.UserName)
+            {
+                result = "[green]WIN[/]";
+                score = this.GetPointsForMode(game.Mode);
+            }
+            else
+            {
+                result = "[red]LOSS[/]";
+                score = 0;
+            }
+
+            table.AddRow(
+                i.ToString(),
+                game.PlayedAt.ToString("dd-MM-yyyy"),
+                opponent,
+                result,
+                game.Mode.ToString(),
+                score.ToString());
+
+            i++;
+        }
+
+        AnsiConsole.Write(table);
+    }
+
+    private int GetPointsForMode(GameMode mode)
+    {
+        return mode switch
+        {
+            GameMode.Easy => 1,
+            GameMode.Medium => 2,
+            GameMode.Hard => 3,
+            GameMode.Manual => 2,
+            _ => 0
+        };
     }
 }

@@ -50,12 +50,6 @@ internal class GameRecord
     public DateTime PlayedAt { get; set; } = DateTime.Now;
 
     /// <summary>
-    /// Gets or sets the result of the game.
-    /// </summary>
-    /// <value>The result of the game.</value>
-    public GameResult Result { get; set; }
-
-    /// <summary>
     /// Gets or sets the name of the winner of the game.
     /// </summary>
     /// <value>The name of the winner of the game.</value>

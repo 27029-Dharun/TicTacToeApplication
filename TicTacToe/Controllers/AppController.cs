@@ -14,6 +14,7 @@ internal class AppController
     private readonly AppView _appView;
     private readonly GameController _gameController;
     private readonly ScoreService _scoreService;
+    private readonly GameService _gameService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AppController"/> class.
@@ -22,12 +23,14 @@ internal class AppController
     /// <param name="appView">Instance of the view.</param>
     /// <param name="gameController">Instance of the game controller.</param>
     /// <param name="scoreService">Instance of the score service.</param>
-    public AppController(AuthController authController, AppView appView, GameController gameController, ScoreService scoreService)
+    /// <param name="gameService">Instance of game services.</param>
+    public AppController(AuthController authController, AppView appView, GameController gameController, ScoreService scoreService, GameService gameService)
     {
         this._authController = authController;
         this._appView = appView;
         this._gameController = gameController;
         this._scoreService = scoreService;
+        this._gameService = gameService;
     }
 
     /// <summary>
@@ -61,6 +64,7 @@ internal class AppController
                     break;
 
                 case MainMenuOption.History:
+                    this.DisplayHistory(session);
                     break;
 
                 case MainMenuOption.Profile:
@@ -93,6 +97,12 @@ internal class AppController
 
             Ui.Pause();
         }
+    }
+
+    private void DisplayHistory(UserSession session)
+    {
+        List<GameRecord> gameRecords = this._gameService.GetGameRecords(session);
+        this._appView.DisplayHistory(gameRecords, session);
     }
 
     private void DisplayProfile(UserSession session)

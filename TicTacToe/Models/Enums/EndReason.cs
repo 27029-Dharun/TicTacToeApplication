@@ -6,5 +6,6 @@
 internal enum EndReason
 {
     Normal,
-    Timeout
+    Timeout,
+    Quit
 }

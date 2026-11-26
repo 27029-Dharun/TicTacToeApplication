@@ -9,6 +9,7 @@ namespace TicTacToe.Services;
 /// </summary>
 internal class ScoreService
 {
+    private const int PointsForDraw = 1;
     private readonly RepositorySelector _scoreRepository;
 
     /// <summary>
@@ -81,11 +82,14 @@ internal class ScoreService
     /// Records the draw condition.
     /// </summary>
     /// <param name="userName">The username of the player.</param>
+    /// <param name="mode">Game mode of the user.</param>
     /// <param name="session">The user session.</param>
-    public void RecordDraw(string userName, UserSession session)
+    public void RecordDraw(string userName, GameMode mode, UserSession session)
     {
         Score playerScore = this._scoreRepository.GetScoreRepository(session).GetScore(userName);
         playerScore.Draws++;
+        playerScore.TotalPoints += PointsForDraw;
+        playerScore.PointsByMode[mode] = playerScore.PointsByMode.GetValueOrDefault(mode) + PointsForDraw;
 
         this._scoreRepository.GetScoreRepository(session).SaveScore(playerScore);
     }
