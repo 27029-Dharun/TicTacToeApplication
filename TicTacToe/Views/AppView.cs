@@ -51,7 +51,7 @@ internal class AppView
             {
                 if (n < 1 || n > length)
                 {
-                    return ValidationResult.Error("[red]Number must be between 1 and 100[/]");
+                    return ValidationResult.Error($"[red]Number must be between 1 and {length}[/]");
                 }
 
                 return ValidationResult.Success();

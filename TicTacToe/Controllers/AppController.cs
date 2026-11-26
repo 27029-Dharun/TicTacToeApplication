@@ -109,6 +109,13 @@ internal class AppController
     private void HandleReplay(UserSession session)
     {
         List<GameRecord> gameRecords = this._gameService.GetGameReplay(session);
+
+        if (gameRecords.Capacity == 0)
+        {
+            this._appView.DisplayInfo("No game history found");
+            return;
+        }
+
         this._appView.DisplayHistory(gameRecords, session);
 
         int gameNumber = this._appView.GetGameToReplay(gameRecords.Capacity);

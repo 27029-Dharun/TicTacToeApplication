@@ -154,6 +154,8 @@ internal class BoardView
 
             while (moveIndex < gameRecord.Moves.Count)
             {
+                AnsiConsole.Clear();
+
                 var currentMove = gameRecord.Moves[moveIndex];
                 string playerName = currentMove.Symbol == gameRecord.PlayerOneSymbol
                     ? gameRecord.PlayerOneName
