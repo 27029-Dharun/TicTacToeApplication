@@ -98,12 +98,15 @@ internal class GameController
                         break;
                     }
 
+                    this._ticTacToeService.AddMove(game, game.PlayerOneSymbol, move);
                     board[move] = game.PlayerOneSymbol;
                 }
                 else
                 {
                     int computerMove = this.GetComputerMove(board, game.PlayerTwoSymbol, game.Mode);
                     Thread.Sleep(500);
+
+                    this._ticTacToeService.AddMove(game, game.PlayerOneSymbol, computerMove);
                     board[computerMove] = game.PlayerTwoSymbol;
                 }
 

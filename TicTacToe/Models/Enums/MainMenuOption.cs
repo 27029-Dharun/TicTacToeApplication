@@ -16,6 +16,11 @@ internal enum MainMenuOption
     History,
 
     /// <summary>
+    /// Represents a option to view game replay.
+    /// </summary>
+    MatchReplay,
+
+    /// <summary>
     /// Represents a option to view the user profile.
     /// </summary>
     Profile,
@@ -29,5 +34,4 @@ internal enum MainMenuOption
     /// Represents a option to logout from the application.
     /// </summary>
     Logout,
-    MatchReplay,
 }

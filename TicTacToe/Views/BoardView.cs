@@ -159,7 +159,7 @@ internal class BoardView
                     ? gameRecord.PlayerOneName
                     : gameRecord.PlayerTwoName;
 
-                AnsiConsole.MarkupLine($"[grey]Move {moveIndex + 1}/{gameRecord.Moves.Count} | {playerName} - {currentMove.Symbol} {currentMove.Timestamp}\n");
+                AnsiConsole.MarkupLine($"[grey]Move {moveIndex + 1}/{gameRecord.Moves.Count} | {playerName} - {currentMove.Symbol} {currentMove.Timestamp}\n[/]");
                 AnsiConsole.MarkupLine($"Press [white]->[/] for next, [white]<-[/] for previous, or [white]Q[/] to exit[/]");
 
                 ConsoleKey key = Console.ReadKey(intercept: true).Key;
