@@ -12,10 +12,11 @@ internal class AppController
 {
     private readonly AuthController _authController;
     private readonly AppView _appView;
-    private readonly GameController _gameController;
+    private readonly TicTacToeController _ticTacToeController;
+    private readonly SnakeWaterGunController _snakeWaterGunController;
     private readonly ScoreService _scoreService;
-    private readonly GameService _gameService;
-    private readonly BoardView _boardView;
+    private readonly TicTacToeService _gameService;
+    private readonly TicTacToeView _boardView;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AppController"/> class.
@@ -26,14 +27,16 @@ internal class AppController
     /// <param name="scoreService">Instance of the score service.</param>
     /// <param name="gameService">Instance of game services.</param>
     /// <param name="boardView">Instance of the board view.</param>
-    public AppController(AuthController authController, AppView appView, GameController gameController, ScoreService scoreService, GameService gameService, BoardView boardView)
+    /// <param name="snakeWaterGunController">The instance of the snake water gun controller.</param>
+    public AppController(AuthController authController, AppView appView, TicTacToeController gameController, ScoreService scoreService, TicTacToeService gameService, TicTacToeView boardView, SnakeWaterGunController snakeWaterGunController)
     {
         this._authController = authController;
         this._appView = appView;
-        this._gameController = gameController;
+        this._ticTacToeController = gameController;
         this._scoreService = scoreService;
         this._gameService = gameService;
         this._boardView = boardView;
+        this._snakeWaterGunController = snakeWaterGunController;
     }
 
     /// <summary>
@@ -49,7 +52,43 @@ internal class AppController
                 break;
             }
 
-            this.RunMainMenu(session);
+            this.ChooseGame(session);
+        }
+    }
+
+    /// <summary>
+    /// Chooses the game to play based on user input and runs the corresponding game controller.
+    /// </summary>
+    /// <param name="session">The user session.</param>
+    public void ChooseGame(UserSession session)
+    {
+        while (true)
+        {
+            GameOption option = this._appView.SelectGame();
+
+            switch(option)
+            {
+                case GameOption.TicTacToe:
+                    this.RunMainMenu(session);
+                    break;
+
+                case GameOption.SnakeWaterGun:
+                    this._snakeWaterGunController.RunSnakeWaterGunGame(session);
+                    break;
+
+                case GameOption.LogOut:
+                    if (session.IsGuest && this._appView.ConfirmLogout())
+                    {
+                        this._scoreService.ClearGuestData(session);
+                        return;
+                    }
+                    else if (!session.IsGuest)
+                    {
+                        return;
+                    }
+
+                    break;
+            }
         }
     }
 
@@ -58,27 +97,27 @@ internal class AppController
         while (true)
         {
             Score score = this._scoreService.GetScoreByUserName(session.UserName, session);
-            MainMenuOption option = this._appView.GetMenuOption(session, score.TotalPoints, score.Wins);
+            TicTacToeMenuOption option = this._appView.GetMenuOption(session, score.TotalPoints, score.Wins);
 
             switch (option)
             {
-                case MainMenuOption.NewGame:
+                case TicTacToeMenuOption.NewGame:
                     this.StartNewGame(session);
                     break;
 
-                case MainMenuOption.History:
+                case TicTacToeMenuOption.History:
                     this.DisplayHistory(session);
                     break;
 
-                case MainMenuOption.MatchReplay:
+                case TicTacToeMenuOption.MatchReplay:
                     this.HandleReplay(session);
                     break;
 
-                case MainMenuOption.Profile:
+                case TicTacToeMenuOption.Profile:
                     this.DisplayProfile(session);
                     break;
 
-                case MainMenuOption.LeaderBoard:
+                case TicTacToeMenuOption.LeaderBoard:
                     if (session.IsGuest)
                     {
                         this._appView.DisplayInfo("Login as user to the see the leaderboard\n");
@@ -88,7 +127,7 @@ internal class AppController
                     this.DisplayLeaderBoard(session);
                     break;
 
-                case MainMenuOption.Logout:
+                case TicTacToeMenuOption.Logout:
                     if (session.IsGuest && this._appView.ConfirmLogout())
                     {
                         this._scoreService.ClearGuestData(session);
@@ -146,6 +185,6 @@ internal class AppController
         GameMode mode = this._appView.GetGameMode();
         TimerOption timerOption = this._appView.GetTimerOption();
 
-        this._gameController.StartGame(mode, timerOption, session);
+        this._ticTacToeController.StartGame(mode, timerOption, session);
     }
 }

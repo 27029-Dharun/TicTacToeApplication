@@ -8,15 +8,15 @@ namespace TicTacToe.Services;
 /// <summary>
 /// Contains business logic for storing the game record.
 /// </summary>
-internal class GameService
+internal class TicTacToeService
 {
     private readonly RepositorySelector _repositorySelector;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GameService"/> class.
+    /// Initializes a new instance of the <see cref="TicTacToeService"/> class.
     /// </summary>
     /// <param name="repositorySelector">The instance of repository selector.</param>
-    internal GameService(RepositorySelector repositorySelector)
+    internal TicTacToeService(RepositorySelector repositorySelector)
     {
         this._repositorySelector = repositorySelector;
     }

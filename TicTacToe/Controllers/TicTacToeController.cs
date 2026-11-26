@@ -9,24 +9,24 @@ namespace TicTacToe.Controllers;
 /// <summary>
 /// Controls the game flow,gets input from the view and stores the record.
 /// </summary>
-internal class GameController
+internal class TicTacToeController
 {
     private readonly AuthController _authController;
-    private readonly BoardView _boardView;
-    private readonly GameService _ticTacToeService;
+    private readonly TicTacToeView _boardView;
+    private readonly TicTacToeService _ticTacToeService;
     private readonly EasyStrategy _easyStrategy;
     private readonly MediumStrategy _mediumStrategy;
     private readonly HardStrategy _hardStrategy;
     private readonly ScoreService _scoreService;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GameController"/> class.
+    /// Initializes a new instance of the <see cref="TicTacToeController"/> class.
     /// </summary>
     /// <param name="boardView">Instance of the board view.</param>
     /// <param name="ticTacToeService">Instance of the game service.</param>
     /// <param name="scoreService">Instance of the score service.</param>
     /// <param name="authController">Instance of the authentication controller.</param>
-    public GameController(BoardView boardView, GameService ticTacToeService, ScoreService scoreService, AuthController authController)
+    public TicTacToeController(TicTacToeView boardView, TicTacToeService ticTacToeService, ScoreService scoreService, AuthController authController)
     {
         this._boardView = boardView;
         this._ticTacToeService = ticTacToeService;
@@ -83,13 +83,13 @@ internal class GameController
                 {
                     int move = this._boardView.GetPlayerMove(currentTurn);
 
-                    if (move == BoardView.QuitMove)
+                    if (move == TicTacToeView.QuitMove)
                     {
                         quitGame = true;
                         break;
                     }
 
-                    if (move == BoardView.TimeoutMove)
+                    if (move == TicTacToeView.TimeoutMove)
                     {
                         this._scoreService.RecordLoss(session.UserName, session);
                         this._ticTacToeService.CompleteAndSaveGame(game, EndReason.Timeout, game.PlayerTwoName, session);
@@ -165,13 +165,13 @@ internal class GameController
                 {
                     int move = this._boardView.GetPlayerMove(game.PlayerOneSymbol);
 
-                    if (move == BoardView.QuitMove)
+                    if (move == TicTacToeView.QuitMove)
                     {
                         quitGame = true;
                         break;
                     }
 
-                    if (move == BoardView.TimeoutMove)
+                    if (move == TicTacToeView.TimeoutMove)
                     {
                         this._boardView.DisplayResult($"[bold red]Time's up! {game.PlayerTwoName} wins![/]");
                         this._scoreService.RecordLoss(playerOneSession.UserName, playerOneSession);
@@ -187,13 +187,13 @@ internal class GameController
                 {
                     int move = this._boardView.GetPlayerMove(game.PlayerTwoSymbol);
 
-                    if (move == BoardView.QuitMove)
+                    if (move == TicTacToeView.QuitMove)
                     {
                         quitGame = true;
                         break;
                     }
 
-                    if (move == BoardView.TimeoutMove)
+                    if (move == TicTacToeView.TimeoutMove)
                     {
                         this._boardView.DisplayResult($"[bold red]Time's up! {game.PlayerOneName} wins![/]");
                         this._scoreService.RecordLoss(playerTwoSession.UserName, playerTwoSession);

@@ -5,7 +5,18 @@
 /// </summary>
 internal enum EndReason
 {
+    /// <summary>
+    /// Represent an option to end the game in a normal mode.
+    /// </summary>
     Normal,
+
+    /// <summary>
+    /// Represents an option to end the game due to timeout.
+    /// </summary>
     Timeout,
-    Quit
+
+    /// <summary>
+    /// Represents an option to end the game due to quit.
+    /// </summary>
+    Quit,
 }

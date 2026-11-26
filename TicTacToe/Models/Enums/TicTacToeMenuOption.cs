@@ -3,7 +3,7 @@
 /// <summary>
 /// Contains the main menu options.
 /// </summary>
-internal enum MainMenuOption
+internal enum TicTacToeMenuOption
 {
     /// <summary>
     /// Represents the option to start a new game.

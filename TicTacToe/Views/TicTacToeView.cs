@@ -9,7 +9,7 @@ namespace TicTacToe.Views;
 /// <summary>
 /// Display the board and handles user input for moves in the Tic Tac Toe game.
 /// </summary>
-internal class BoardView
+internal class TicTacToeView
 {
     /// <summary>
     /// Constant representing a move where the player chooses to quit the game.
@@ -219,27 +219,6 @@ internal class BoardView
     internal void DisplayResult(string customMessage)
     {
         this._liveContext?.UpdateTarget(this.BuildScreen(-1, Symbol.Empty, 0, customMessage));
-    }
-
-    /// <summary>
-    /// Asks the user if they want to play again after a game ends.
-    /// </summary>
-    /// <returns>True if the user want to play again;otherwise, false.</returns>
-    internal bool AskPlayAgain()
-    {
-        AnsiConsole.WriteLine();
-
-        string choice = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-                .Title("What do you want to do?")
-                .AddChoices("Play Again", "Exit"));
-
-        if (choice == "Play Again")
-        {
-            return true;
-        }
-
-        return false;
     }
 
     /// <summary>

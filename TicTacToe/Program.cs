@@ -29,13 +29,17 @@ internal class Program
         RepositorySelector repositorySelector = new RepositorySelector(jsonScoreRepository, inMemoryScoreRepository, jsonGameRepository, inMemoryGameRepository);
 
         ScoreService scoreService = new ScoreService(repositorySelector);
-        GameService gameService = new GameService(repositorySelector);
+        TicTacToeService gameService = new TicTacToeService(repositorySelector);
 
-        BoardView boardView = new BoardView();
-        GameController gameController = new GameController(boardView, gameService, scoreService, authController);
+        TicTacToeView boardView = new TicTacToeView();
+        TicTacToeController gameController = new TicTacToeController(boardView, gameService, scoreService, authController);
+
+        SnakeWaterGunView snakeWaterGunView = new SnakeWaterGunView();
+        SnakeWaterGunService snakeWaterGunService = new SnakeWaterGunService();
+        SnakeWaterGunController snakeWaterGunController = new SnakeWaterGunController(snakeWaterGunView, snakeWaterGunService);
 
         AppView appView = new AppView();
-        AppController appController = new AppController(authController, appView, gameController, scoreService, gameService, boardView);
+        AppController appController = new AppController(authController, appView, gameController, scoreService, gameService, boardView, snakeWaterGunController);
         appController.Run();
     }
 }

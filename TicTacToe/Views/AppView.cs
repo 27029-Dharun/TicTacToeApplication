@@ -15,8 +15,8 @@ internal class AppView
     /// <param name="session">The current logged-in user session.</param>
     /// <param name="totalPoints">Total points by the user.</param>
     /// <param name="wins">Total wins by the user.</param>
-    /// <returns>The selected <see cref="MainMenuOption"/>.</returns>
-    internal MainMenuOption GetMenuOption(UserSession session, int totalPoints, int wins)
+    /// <returns>The selected <see cref="TicTacToeMenuOption"/>.</returns>
+    internal TicTacToeMenuOption GetMenuOption(UserSession session, int totalPoints, int wins)
     {
         AnsiConsole.Clear();
 
@@ -29,12 +29,12 @@ internal class AppView
 
         return mainMenu switch
         {
-            "Play New Game" => MainMenuOption.NewGame,
-            "History" => MainMenuOption.History,
-            "Match Replay" => MainMenuOption.MatchReplay,
-            "Profile" => MainMenuOption.Profile,
-            "Leaderboard" => MainMenuOption.LeaderBoard,
-            "Logout" => MainMenuOption.Logout,
+            "Play New Game" => TicTacToeMenuOption.NewGame,
+            "History" => TicTacToeMenuOption.History,
+            "Match Replay" => TicTacToeMenuOption.MatchReplay,
+            "Profile" => TicTacToeMenuOption.Profile,
+            "Leaderboard" => TicTacToeMenuOption.LeaderBoard,
+            "Logout" => TicTacToeMenuOption.Logout,
             _ => throw new InvalidOperationException("Invalid choice")
         };
     }
@@ -218,6 +218,17 @@ internal class AppView
         .AddItem("Manual", score.PointsByMode.GetValueOrDefault(GameMode.Manual), Color.Aqua);
 
         AnsiConsole.Write(Align.Center(chart));
+    }
+
+    /// <summary>
+    /// Selects the game to play from the main menu.
+    /// </summary>
+    /// <returns>The main menu option selected.</returns>
+    internal GameOption SelectGame()
+    {
+        return AnsiConsole.Prompt(new SelectionPrompt<GameOption>()
+            .Title("[bold yellow]Select the game:[/]")
+            .AddChoices(Enum.GetValues<GameOption>()));
     }
 
     /// <summary>
