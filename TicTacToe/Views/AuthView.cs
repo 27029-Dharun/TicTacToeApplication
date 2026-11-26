@@ -124,6 +124,30 @@ internal class AuthView
     }
 
     /// <summary>
+    /// Displays and get the player 2 login option.
+    /// </summary>
+    /// <returns>The option selected by the user.</returns>
+    internal WelcomeChoice ShowPlayer2Menu()
+    {
+        AnsiConsole.Clear();
+
+        Ui.Title("Player 2 Login");
+
+        var choice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[green]What would you like to do[/]")
+                .AddChoices("Login", "Play as guest", "Exit"));
+
+        return choice switch
+        {
+            "Login" => WelcomeChoice.Login,
+            "Play as guest" => WelcomeChoice.Guest,
+            "Exit" => WelcomeChoice.Exit,
+            _ => throw new InvalidOperationException("Invalid choice")
+        };
+    }
+
+    /// <summary>
     /// Pauses the screen until the user presses a key.
     /// </summary>
     internal void Pause()

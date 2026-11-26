@@ -93,7 +93,7 @@ internal class ScoreService
     /// <summary>
     /// Clears guest data when logout.
     /// </summary>
-    /// <param name="session">The user session when screated.</param>
+    /// <param name="session">The user session when created.</param>
     internal void ClearGuestData(UserSession session)
     {
         this._scoreRepository.ClearGuest(session);

@@ -68,6 +68,46 @@ internal class AuthController
         }
     }
 
+    /// <summary>
+    /// Get the credentials of player 2.
+    /// </summary>
+    /// <returns>The user session of the player 2</returns>
+    internal UserSession? GetPlayer2()
+    {
+        while (true)
+        {
+            try
+            {
+                WelcomeChoice choice = this._authView.ShowPlayer2Menu();
+                switch (choice)
+                {
+                    case WelcomeChoice.Login:
+                        UserSession? session = this.HandleLogIn();
+
+                        if (session != null)
+                        {
+                            return session;
+                        }
+
+                        this._authView.DisplayError("Please enter a valid username and password");
+                        break;
+
+                    case WelcomeChoice.Guest:
+                        return this._authService.LogInGuest();
+
+                    case WelcomeChoice.Exit:
+                        return null;
+                }
+
+                this._authView.Pause();
+            }
+            catch (Exception e)
+            {
+                this._authView.DisplayError(e.Message);
+            }
+        }
+    }
+
     private UserSession? HandleLogIn()
     {
         this._authView.DisplayTitle("LOGIN PAGE");

@@ -29,7 +29,7 @@ internal class Program
 
         BoardView boardView = new BoardView();
         TicTacToeService ticTacToeService = new TicTacToeService();
-        GameController gameController = new GameController(boardView, ticTacToeService, scoreService);
+        GameController gameController = new GameController(boardView, ticTacToeService, scoreService, authController);
 
         AppView appView = new AppView();
         AppController appController = new AppController(authController, appView, gameController, scoreService);

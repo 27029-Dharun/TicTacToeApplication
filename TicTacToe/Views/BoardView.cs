@@ -3,7 +3,6 @@ using Spectre.Console;
 using Spectre.Console.Rendering;
 using TicTacToe.Models;
 using TicTacToe.Models.Enums;
-using TicTacToe.Validators;
 
 namespace TicTacToe.Views;
 
@@ -154,34 +153,6 @@ internal class BoardView
     }
 
     /// <summary>
-    /// Gets the player move with arrow keys.
-    /// </summary>
-    /// <returns>The index of the selected cell.</returns>
-    internal string GetPlayerName()
-    {
-        int remainingAttempts = 3;
-
-        string password = AnsiConsole.Prompt(
-            new TextPrompt<string>("[grey]Enter the username of player 2: [/]"));
-
-        while (!Validator.IsValidName(password))
-        {
-            if (remainingAttempts == 1)
-            {
-                throw new InvalidDataException("No attempt left, Please try again.\n");
-            }
-
-            Ui.Error($"Enter a valid username with minimum {Validator.MinimumNameLength} characters\n");
-            Ui.Error($"Tries left: {--remainingAttempts}\n");
-
-            password = AnsiConsole.Prompt(
-            new TextPrompt<string>("[grey]Enter the username of player 2: [/]"));
-        }
-
-        return password;
-    }
-
-    /// <summary>
     /// Asks the user if they want to play again after a game ends.
     /// </summary>
     /// <returns>True if the user want to play again;otherwise, false.</returns>
@@ -200,6 +171,15 @@ internal class BoardView
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Displays the error message.
+    /// </summary>
+    /// <param name="message">The error message to be displayed.</param>
+    internal void DisplayError(string message)
+    {
+        Ui.Error(message);
     }
 
     private IRenderable BuildScreen(int selectedIndex, Symbol currentTurn, int remainingSeconds, string? result = null)
