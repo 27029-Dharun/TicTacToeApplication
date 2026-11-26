@@ -206,6 +206,15 @@ internal class TicTacToeService
     }
 
     /// <summary>
+    /// Clears the guest data for the given user session.
+    /// </summary>
+    /// <param name="session">The user session to create.</param>
+    internal void ClearGuestData(UserSession session)
+    {
+        this._repositorySelector.ClearGuest(session);
+    }
+
+    /// <summary>
     /// Adds the game record to the repository based on the user session.
     /// </summary>
     /// <param name="session">The user session of the user.</param>

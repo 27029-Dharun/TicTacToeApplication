@@ -9,6 +9,37 @@ namespace TicTacToe.Views;
 internal class SnakeWaterGunView
 {
     /// <summary>
+    /// Displays the live scoreboard at the top of each round.
+    /// </summary>
+    /// <param name="playerName">The name of the player.</param>
+    /// <param name="userScore">User's point</param>
+    /// <param name="computerScore">Computers point</param>
+    /// <param name="round">Rounds completed.</param>
+    /// <param name="bestOf">The best of rounds.</param>
+    internal void DisplayScoreHeader(string playerName, int userScore, int computerScore, int round, int bestOf)
+    {
+        AnsiConsole.Clear();
+
+        Ui.Title("Snake Water Gun");
+
+        int winsNeeded = (bestOf / 2) + 1;
+
+        var scoreTable = new Table()
+            .Border(TableBorder.Rounded)
+            .AddColumn(new TableColumn($"[bold cyan]{Markup.Escape(playerName)}[/]").Centered())
+            .AddColumn(new TableColumn($"Round {round} (Best of {bestOf})").Centered())
+            .AddColumn(new TableColumn("[bold orange1]Computer[/]").Centered());
+
+        scoreTable.AddRow(
+            $"{userScore}",
+            $"[grey]First to {winsNeeded}[/]",
+            $"{computerScore}");
+
+        AnsiConsole.Write(scoreTable);
+        AnsiConsole.WriteLine();
+    }
+
+    /// <summary>
     /// Asks the user if they want to play again after a game ends.
     /// </summary>
     /// <returns>True if the user want to play again;otherwise, false.</returns>
@@ -36,8 +67,9 @@ internal class SnakeWaterGunView
     /// <param name="computerChoice">The choice selected by the computer.</param>
     internal void DisplayChoices(SnakeWaterGunChoice userChoice, SnakeWaterGunChoice computerChoice)
     {
-        AnsiConsole.MarkupLine($"[bold yellow]You chose:[/] {userChoice}");
-        AnsiConsole.MarkupLine($"[bold yellow]Computer chose:[/] {computerChoice}");
+        AnsiConsole.MarkupLine($"[bold cyan]You chose:[/] [white]{userChoice}[/]  |  [bold magenta]Computer chose:[/] [white]{computerChoice}[/]");
+        AnsiConsole.MarkupLine("[grey]Press any key for next round...[/]");
+        Console.ReadKey();
     }
 
     /// <summary>
@@ -58,7 +90,7 @@ internal class SnakeWaterGunView
     /// </summary>
     /// <param name="userScore">The score earned by the user.</param>
     /// <param name="computerScore">The score earned by the computer.</param>
-    internal void DisplayRoundResult(int userScore, int computerScore)
+    internal void DisplayMatchResult(int userScore, int computerScore)
     {
         if (userScore > computerScore)
         {

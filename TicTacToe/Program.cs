@@ -39,7 +39,7 @@ internal class Program
         SnakeWaterGunController snakeWaterGunController = new SnakeWaterGunController(snakeWaterGunView, snakeWaterGunService);
 
         AppView appView = new AppView();
-        AppController appController = new AppController(authController, appView, gameController, scoreService, gameService, boardView, snakeWaterGunController);
+        AppController appController = new AppController(authController, appView, gameController, scoreService, gameService, snakeWaterGunController);
         appController.Run();
     }
 }

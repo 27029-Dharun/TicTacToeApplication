@@ -30,43 +30,46 @@ internal class SnakeWaterGunController
     /// <param name="session">The user session created.</param>
     public void RunSnakeWaterGunGame(UserSession session)
     {
-        this._snakeWaterGunView.DisplayGameInstructions();
-
-        int bestOf = this._snakeWaterGunView.GetBestOfChoice();
-
         while (true)
         {
+            this._snakeWaterGunView.DisplayGameInstructions();
+            int bestOf = this._snakeWaterGunView.GetBestOfChoice();
+            int winsNeeded = (bestOf / 2) + 1;
+
             int userScore = 0;
             int computerScore = 0;
+            int round = 1;
 
-            while (userScore + computerScore < bestOf)
+            while (userScore < winsNeeded && computerScore < winsNeeded)
             {
-                SnakeWaterGunChoice userChoice = this.GetUserChoice();
+                this._snakeWaterGunView.DisplayScoreHeader(session.UserName, userScore, computerScore, round, bestOf);
+
+                SnakeWaterGunChoice userChoice = this._snakeWaterGunView.GetChoice();
                 SnakeWaterGunChoice computerChoice = this._snakeWaterGunService.GetComputerChoice();
-                this._snakeWaterGunView.DisplayChoices(userChoice, computerChoice);
+
                 int result = this._snakeWaterGunService.DetermineWinner(userChoice, computerChoice);
 
                 if (result == SnakeWaterGunService.UserWins)
                 {
                     userScore++;
                 }
-                else
+                else if (result == SnakeWaterGunService.ComputerWins)
                 {
                     computerScore++;
                 }
+
+                this._snakeWaterGunView.DisplayScoreHeader(session.UserName, userScore, computerScore, round, bestOf);
+                this._snakeWaterGunView.DisplayChoices(userChoice, computerChoice);
+
+                round++;
             }
 
-            this._snakeWaterGunView.DisplayRoundResult(userScore, computerScore);
+            this._snakeWaterGunView.DisplayMatchResult(userScore, computerScore);
 
             if (!this._snakeWaterGunView.AskPlayAgain())
             {
                 break;
             }
         }
-    }
-
-    private SnakeWaterGunChoice GetUserChoice()
-    {
-        return this._snakeWaterGunView.GetChoice();
     }
 }

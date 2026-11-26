@@ -60,5 +60,6 @@ internal class RepositorySelector
         }
 
         this._inMemoryScoreRepository.Remove();
+        this._inMemoryGameRepository.Remove();
     }
 }

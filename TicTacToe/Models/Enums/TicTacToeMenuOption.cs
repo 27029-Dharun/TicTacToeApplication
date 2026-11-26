@@ -33,5 +33,5 @@ internal enum TicTacToeMenuOption
     /// <summary>
     /// Represents a option to logout from the application.
     /// </summary>
-    Logout,
+    Back,
 }
