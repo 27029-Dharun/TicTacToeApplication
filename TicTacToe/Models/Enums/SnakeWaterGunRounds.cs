@@ -6,11 +6,6 @@
 internal enum SnakeWaterGunRounds
 {
     /// <summary>
-    /// Represents an option to select the one point game.
-    /// </summary>
-    One = 1,
-
-    /// <summary>
     /// Represents an option to select the three point game.
     /// </summary>
     Three = 3,
