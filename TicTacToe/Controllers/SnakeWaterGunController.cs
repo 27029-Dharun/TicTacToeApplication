@@ -85,8 +85,6 @@ internal class SnakeWaterGunController
     {
         List<GameRecord> history = this._snakeWaterGunService.GetGameHistory(session);
         this._snakeWaterGunView.DisplayHistory(history, session);
-
-        Ui.Pause();
     }
 
     private void StartGame(UserSession session)

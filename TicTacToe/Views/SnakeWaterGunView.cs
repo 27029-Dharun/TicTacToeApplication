@@ -239,7 +239,6 @@ internal class SnakeWaterGunView
         if (leaderboard.Count == 0)
         {
             Ui.Info("No scores recorded yet.\n");
-            Ui.Pause();
             return;
         }
 

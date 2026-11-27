@@ -19,7 +19,7 @@ internal class AppView
         Ui.Title("WELCOME");
 
         return AnsiConsole.Prompt(new SelectionPrompt<GameOption>()
-            .Title("[bold yellow]Select the game:[/]")
+            .Title("[bold yellow]Select the game to play:[/]")
             .AddChoices(Enum.GetValues<GameOption>()));
     }
 

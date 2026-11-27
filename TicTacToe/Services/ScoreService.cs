@@ -45,10 +45,10 @@ internal class ScoreService
     public List<(string Username, int TotalPoints, int Wins)> GetSnakeWaterGunLeaderBoard(UserSession session)
     {
         return this._scoreRepository.GetScoreRepository(session).GetAll()
-            .OrderByDescending(s => s.TotalPoints)
-            .ThenByDescending(s => s.Wins)
+            .OrderByDescending(s => s.SnakeWaterGunPoints)
+            .ThenByDescending(s => s.SnakeWaterGunWins)
             .Take(20)
-            .Select(s => (s.Username, s.TotalPoints, s.Wins))
+            .Select(s => (s.Username, s.SnakeWaterGunPoints, s.SnakeWaterGunWins))
             .ToList();
     }
 
