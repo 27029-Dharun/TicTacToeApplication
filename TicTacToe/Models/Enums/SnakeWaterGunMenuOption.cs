@@ -19,6 +19,14 @@ internal enum SnakeWaterGunMenuOption
     /// Represents an option to go back.
     /// </summary>
     Back = 3,
+
+    /// <summary>
+    /// Represents an option to view the leaderboard.
+    /// </summary>
     Leaderboard = 4,
+
+    /// <summary>
+    /// Represents an option to view the profile.
+    /// </summary>
     Profile = 5,
 }

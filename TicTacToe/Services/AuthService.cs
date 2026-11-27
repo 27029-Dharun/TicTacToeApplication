@@ -29,7 +29,7 @@ internal class AuthService
     /// <returns>A tuple with status and message returned from the method.</returns>
     public (bool success, string message) CreateUser(string userName, string name, string password, string email)
     {
-        if (this._userRepository.Exists(userName))
+        if (this._userRepository.Exists(userName) || userName.Equals("Computer", StringComparison.OrdinalIgnoreCase))
         {
             return (false, "Username already exists\n");
         }

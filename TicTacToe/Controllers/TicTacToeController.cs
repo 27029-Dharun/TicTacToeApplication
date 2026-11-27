@@ -96,7 +96,7 @@ internal class TicTacToeController
 
         this._ticTacToeView.DisplayHistory(gameRecords, session);
 
-        int gameNumber = this._ticTacToeView.GetGameToReplay(gameRecords.Capacity);
+        int gameNumber = this._ticTacToeView.GetGameToReplay(gameRecords.Count);
 
         this._ticTacToeView.ReplayGame(gameRecords[gameNumber - 1]);
     }
@@ -249,7 +249,7 @@ internal class TicTacToeController
 
                 if (move == TicTacToeView.TimeoutMove)
                 {
-                    this.HandleManualTimeOut(game, playerOneSession, playerTwoSession, mode);
+                    this.HandleManualTimeOut(game, currentTurn, playerOneSession, playerTwoSession, mode);
                     break;
                 }
 
@@ -324,12 +324,22 @@ internal class TicTacToeController
         }
     }
 
-    private void HandleManualTimeOut(GameRecord game, UserSession playerOneSession, UserSession playerTwoSession, GameMode mode)
+    private void HandleManualTimeOut(GameRecord game, Symbol currentTurn, UserSession playerOneSession, UserSession playerTwoSession, GameMode mode)
     {
-        this._scoreService.RecordLoss(playerOneSession.UserName, playerOneSession);
-        this._scoreService.RecordWin(playerTwoSession.UserName, mode, playerTwoSession);
-        this._ticTacToeService.CompleteAndSaveGame(game, EndReason.Timeout, game.PlayerTwoName, playerOneSession, playerTwoSession);
-        this._ticTacToeView.DisplayResult($"[bold red]Time's up! {game.PlayerTwoName} wins![/]");
+        if (currentTurn == game.PlayerOneSymbol)
+        {
+            this._scoreService.RecordLoss(playerOneSession.UserName, playerOneSession);
+            this._scoreService.RecordWin(playerTwoSession.UserName, mode, playerTwoSession);
+            this._ticTacToeService.CompleteAndSaveGame(game, EndReason.Timeout, game.PlayerTwoName, playerOneSession, playerTwoSession);
+            this._ticTacToeView.DisplayResult($"[bold red]Time's up! {game.PlayerTwoName} wins![/]");
+        }
+        else
+        {
+            this._scoreService.RecordLoss(playerTwoSession.UserName, playerTwoSession);
+            this._scoreService.RecordWin(playerOneSession.UserName, mode, playerOneSession);
+            this._ticTacToeService.CompleteAndSaveGame(game, EndReason.Timeout, game.PlayerOneName, playerOneSession, playerTwoSession);
+            this._ticTacToeView.DisplayResult($"[bold red]Time's up! {game.PlayerOneName} wins![/]");
+        }
     }
 
     private int GetComputerMove(Symbol[] board, Symbol computerSymbol, GameMode mode)

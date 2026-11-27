@@ -69,7 +69,7 @@ internal class SnakeWaterGunView
     /// <param name="result">The result of the round.</param>
     internal void DisplayChoices(SnakeWaterGunChoice userChoice, SnakeWaterGunChoice computerChoice, int result)
     {
-        AnsiConsole.MarkupLine($"[bold cyan]You chose:[/] [white]{userChoice}[/]  |  [bold magenta]Computer chose:[/] [white]{computerChoice}[/]");
+        AnsiConsole.MarkupLine($"[bold cyan]You chose:[/] [white]{userChoice}[/]  |  [bold orange1]Computer chose:[/] [white]{computerChoice}[/]");
 
         if (result == 1)
         {
@@ -196,29 +196,25 @@ internal class SnakeWaterGunView
         foreach (var game in gameRecords.OrderByDescending(g => g.PlayedAt).Take(100))
         {
             string result;
-            int score = 0;
 
             if (game.EndReason == EndReason.Quit)
             {
                 result = "[grey]QUIT[/]";
-                score = 0;
             }
             else if (game.WinnerName == session.UserName)
             {
                 result = "[green]WIN[/]";
-                score = 1;
             }
             else
             {
                 result = "[red]LOSS[/]";
-                score = 0;
             }
 
             table.AddRow(
                 i.ToString(),
                 game.PlayedAt.ToString("dd-MM-yyyy"),
                 result,
-                score.ToString());
+                $"{game.PlayerOneScore}-{game.PlayerTwoScore}");
 
             i++;
         }

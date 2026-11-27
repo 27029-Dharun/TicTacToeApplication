@@ -129,7 +129,15 @@ internal class SnakeWaterGunController
                 round++;
             }
 
-            this._scoreService.RecordSnakeWaterGunWin(session);
+            if (userScore > computerScore)
+            {
+                this._scoreService.RecordSnakeWaterGunWin(session);
+            }
+            else
+            {
+                this._scoreService.RecordSnakeWaterGunLoss(session);
+            }
+
             this._snakeWaterGunService.SaveGame(session, bestOf, userScore, computerScore);
             this._snakeWaterGunView.DisplayMatchResult(userScore, computerScore);
 

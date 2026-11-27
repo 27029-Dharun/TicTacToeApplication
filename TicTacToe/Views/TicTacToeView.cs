@@ -403,9 +403,11 @@ internal class TicTacToeView
 
         Ui.Banner(
             "STATISTICS",
-            $"Game played: [grey]{score.SnakeWaterGunWins + score.Losses + score.Draws}[/]\n" +
-            $"Wins: [green]{score.SnakeWaterGunWins}[/]\nLosses: [red]{score.Losses}[/]\n" +
-            $"Draws: [yellow]{score.Draws}[/]\nTotal points: [yellow]{score.TotalPoints}[/]\n");
+            $"Game played: [grey]{score.Wins + score.Losses + score.Draws}[/]\n" +
+            $"Wins: [green]{score.Wins}[/]\n+" +
+            $"Losses: [red]{score.Losses}[/]\n" +
+            $"Draws: [yellow]{score.Draws}[/]\n" +
+            $"Total points: [yellow]{score.TotalPoints}[/]\n");
 
         var chart = new BarChart()
         .Width(50)

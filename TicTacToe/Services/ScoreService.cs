@@ -30,6 +30,7 @@ internal class ScoreService
     public List<(string Username, int TotalPoints, int Wins)> GetTicTacToeLeaderBoard(UserSession session)
     {
         return this._scoreRepository.GetScoreRepository(session).GetAll()
+            .Where(s => s.TotalPoints > 0)
             .OrderByDescending(s => s.TotalPoints)
             .ThenByDescending(s => s.Wins)
             .Take(20)
@@ -45,6 +46,7 @@ internal class ScoreService
     public List<(string Username, int TotalPoints, int Wins)> GetSnakeWaterGunLeaderBoard(UserSession session)
     {
         return this._scoreRepository.GetScoreRepository(session).GetAll()
+            .Where(s => s.SnakeWaterGunWins > 0)
             .OrderByDescending(s => s.SnakeWaterGunPoints)
             .ThenByDescending(s => s.SnakeWaterGunWins)
             .Take(20)

@@ -94,7 +94,7 @@ internal class AuthView
         return this.GetValidatedInput(
             "Enter your username (unique): ",
             false,
-            Validator.IsValidName,
+            Validator.IsValidUserName,
             "Enter a valid username");
     }
 

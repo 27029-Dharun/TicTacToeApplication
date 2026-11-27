@@ -21,6 +21,8 @@ internal static class Validator
     /// Minimum length of the name.
     /// </summary>
     internal const int MinimumNameLength = 3;
+    private const int MinimumUsernameLength = 3;
+    private const int MaximumNameLength = 15;
 
     /// <summary>
     /// Validates email.
@@ -60,5 +62,27 @@ internal static class Validator
     internal static bool IsValidPassword(string password)
     {
         return !string.IsNullOrWhiteSpace(password) && password.Length >= MinimumPasswordLength;
+    }
+
+    /// <summary>
+    /// Validates the username.
+    /// </summary>
+    /// <param name="username">The username entered by the user.</param>
+    /// <returns>True if the username is valid.</returns>
+    internal static bool IsValidUserName(string username)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return false;
+        }
+
+        string trimmed = username.Trim();
+
+        if (trimmed.Length < MinimumUsernameLength || trimmed.Length > MaximumNameLength)
+        {
+            return false;
+        }
+
+        return Regex.IsMatch(trimmed, @"^[a-zA-Z][a-zA-Z0-9_]*$");
     }
 }

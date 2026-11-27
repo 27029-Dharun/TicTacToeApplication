@@ -45,6 +45,7 @@ internal class SnakeWaterGunService
         GameRecord gameRecord = new GameRecord()
         {
             GameType = GameType.SnakeWaterGun,
+            BestOf = bestOf,
             PlayerOneName = session.UserName,
             PlayerTwoName = "Computer",
             PlayerOneScore = userScore,
