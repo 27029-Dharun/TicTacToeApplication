@@ -65,7 +65,7 @@ internal class SnakeWaterGunController
                 }
 
                 this._snakeWaterGunView.DisplayScoreHeader(session.UserName, userScore, computerScore, round, bestOf);
-                this._snakeWaterGunView.DisplayChoices(userChoice, computerChoice);
+                this._snakeWaterGunView.DisplayChoices(userChoice, computerChoice, result);
 
                 round++;
             }

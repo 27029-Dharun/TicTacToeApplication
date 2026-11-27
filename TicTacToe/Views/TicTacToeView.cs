@@ -161,8 +161,6 @@ internal class TicTacToeView
                     ? gameRecord.PlayerOneName
                     : gameRecord.PlayerTwoName;
 
-                AnsiConsole.MarkupLine($"[grey]Move {moveIndex + 1}/{gameRecord.Moves.Count} | {playerName} - {currentMove.Symbol} {currentMove.Timestamp}[/]");
-
                 ConsoleKey key = Console.ReadKey().Key;
 
                 if (key == ConsoleKey.Escape || key == ConsoleKey.Q)
@@ -189,6 +187,8 @@ internal class TicTacToeView
 
                     this.UpdateBoard(previousMove.Symbol);
                 }
+
+                AnsiConsole.MarkupLine($"[grey]Move {moveIndex + 1}/{gameRecord.Moves.Count} | {playerName} - {currentMove.Symbol} {currentMove.Timestamp}[/]");
             }
 
             string outcomeText = string.IsNullOrWhiteSpace(gameRecord.WinnerName)

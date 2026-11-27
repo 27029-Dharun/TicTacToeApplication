@@ -14,6 +14,10 @@ internal class AppView
     /// <returns>The main menu option selected.</returns>
     internal GameOption SelectGame()
     {
+        AnsiConsole.Clear();
+
+        Ui.Title("WELCOME");
+
         return AnsiConsole.Prompt(new SelectionPrompt<GameOption>()
             .Title("[bold yellow]Select the game:[/]")
             .AddChoices(Enum.GetValues<GameOption>()));

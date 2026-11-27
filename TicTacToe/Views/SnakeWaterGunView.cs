@@ -65,9 +65,24 @@ internal class SnakeWaterGunView
     /// </summary>
     /// <param name="userChoice">The choice selected by user.</param>
     /// <param name="computerChoice">The choice selected by the computer.</param>
-    internal void DisplayChoices(SnakeWaterGunChoice userChoice, SnakeWaterGunChoice computerChoice)
+    /// <param name="result">The result of the round.</param>
+    internal void DisplayChoices(SnakeWaterGunChoice userChoice, SnakeWaterGunChoice computerChoice, int result)
     {
         AnsiConsole.MarkupLine($"[bold cyan]You chose:[/] [white]{userChoice}[/]  |  [bold magenta]Computer chose:[/] [white]{computerChoice}[/]");
+
+        if (result == 1)
+        {
+            AnsiConsole.MarkupLine("You got +1 point.");
+        }
+        else if (result == -1)
+        {
+            AnsiConsole.MarkupLine($"Computer got +1 point.");
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"It's draw.");
+        }
+
         AnsiConsole.MarkupLine("[grey]Press any key for next round...[/]");
         Console.ReadKey();
     }

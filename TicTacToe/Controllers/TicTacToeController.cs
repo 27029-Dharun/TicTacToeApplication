@@ -14,10 +14,10 @@ internal class TicTacToeController
     private readonly AuthController _authController;
     private readonly TicTacToeView _ticTacToeView;
     private readonly TicTacToeService _ticTacToeService;
+    private readonly ScoreService _scoreService;
     private readonly EasyStrategy _easyStrategy;
     private readonly MediumStrategy _mediumStrategy;
     private readonly HardStrategy _hardStrategy;
-    private readonly ScoreService _scoreService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TicTacToeController"/> class.
@@ -262,7 +262,6 @@ internal class TicTacToeController
                 if (winner != Symbol.Empty)
                 {
                     this.HandleManualWinner(game, playerOneSession, playerTwoSession, mode, winner);
-
                     break;
                 }
 
