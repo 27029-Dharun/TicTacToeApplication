@@ -35,9 +35,14 @@ internal class MediumStrategy : IMoveStrategy
             .Where(index => board[index] == Symbol.Empty)
             .ToList();
 
+        if (availableCells.Count == 0)
+        {
+            return -1;
+        }
+
         if (Random.Shared.Next(100) < 35)
         {
-            return availableCells[Random.Shared.Next(availableCells.Capacity - 1)];
+            return availableCells[Random.Shared.Next(availableCells.Count)];
         }
 
         Symbol opponentSymbol = computerSymbol == Symbol.X ? Symbol.O : Symbol.X;

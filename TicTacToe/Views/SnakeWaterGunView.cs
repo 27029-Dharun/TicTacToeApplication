@@ -77,6 +77,8 @@ internal class SnakeWaterGunView
     /// </summary>
     internal void DisplayGameInstructions()
     {
+        AnsiConsole.Clear();
+
         Ui.Title("Snake Water Gun Game");
 
         AnsiConsole.MarkupLine("[bold yellow]Instructions:[/]");
@@ -106,12 +108,12 @@ internal class SnakeWaterGunView
     /// Gets the number of rounds (Best of) for the Snake Water Gun game from the console.
     /// </summary>
     /// <returns>The choice selected by the user.</returns>
-    internal int GetBestOfChoice()
+    internal SnakeWaterGunRounds GetBestOfChoice()
     {
         return AnsiConsole.Prompt(
-            new SelectionPrompt<int>()
+            new SelectionPrompt<SnakeWaterGunRounds>()
                 .Title("[bold yellow]Enter the number of rounds (Best of):[/]")
-                .AddChoices(1, 3, 5, 7, 9));
+                .AddChoices(Enum.GetValues<SnakeWaterGunRounds>()));
     }
 
     /// <summary>

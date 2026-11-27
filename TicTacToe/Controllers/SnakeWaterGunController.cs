@@ -33,7 +33,13 @@ internal class SnakeWaterGunController
         while (true)
         {
             this._snakeWaterGunView.DisplayGameInstructions();
-            int bestOf = this._snakeWaterGunView.GetBestOfChoice();
+            int bestOf = (int)this._snakeWaterGunView.GetBestOfChoice();
+
+            if (bestOf == 0)
+            {
+                return;
+            }
+
             int winsNeeded = (bestOf / 2) + 1;
 
             int userScore = 0;
