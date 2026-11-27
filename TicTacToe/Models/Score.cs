@@ -65,4 +65,22 @@ internal class Score
     /// </summary>
     /// <value>The total score of the user.</value>
     public int TotalPoints { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total wins.
+    /// </summary>
+    /// <value>No of wins.</value>
+    public int SnakeWaterGunWins { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total loss.
+    /// </summary>
+    /// <value>No of loss.</value>
+    public int SnakeWaterGunLosses { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total points.
+    /// </summary>
+    /// <value>Total point in Snake water gun.</value>
+    public int SnakeWaterGunPoints { get; set; }
 }

@@ -30,6 +30,7 @@ internal class TicTacToeService
     {
         return this._repositorySelector.GetGameRepository(session)
             .GetByUserName(session.UserName)
+            .Where(x => x.GameType == GameType.TicTacToe)
             .OrderByDescending(x => x.PlayedAt)
             .Take(100)
             .ToList();
@@ -44,6 +45,7 @@ internal class TicTacToeService
     {
         return this._repositorySelector.GetGameRepository(session)
             .GetByUserName(session.UserName)
+            .Where(x => x.GameType == GameType.TicTacToe)
             .OrderByDescending(x => x.PlayedAt)
             .Take(10)
             .ToList();
@@ -140,6 +142,7 @@ internal class TicTacToeService
     {
         GameRecord game = new GameRecord()
         {
+            GameType = GameType.TicTacToe,
             PlayerOneName = session.UserName,
             Mode = mode,
             PlayedAt = DateTime.Now,

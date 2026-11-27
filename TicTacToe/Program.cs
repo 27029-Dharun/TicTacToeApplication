@@ -35,8 +35,8 @@ internal class Program
         TicTacToeController gameController = new TicTacToeController(boardView, gameService, scoreService, authController);
 
         SnakeWaterGunView snakeWaterGunView = new SnakeWaterGunView();
-        SnakeWaterGunService snakeWaterGunService = new SnakeWaterGunService();
-        SnakeWaterGunController snakeWaterGunController = new SnakeWaterGunController(snakeWaterGunView, snakeWaterGunService);
+        SnakeWaterGunService snakeWaterGunService = new SnakeWaterGunService(repositorySelector);
+        SnakeWaterGunController snakeWaterGunController = new SnakeWaterGunController(snakeWaterGunView, snakeWaterGunService, scoreService);
 
         AppView appView = new AppView();
         AppController appController = new AppController(authController, appView, gameController, scoreService, gameService, snakeWaterGunController);

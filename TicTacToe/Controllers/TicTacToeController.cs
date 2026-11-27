@@ -45,7 +45,7 @@ internal class TicTacToeController
     {
         while (true)
         {
-            Score score = this._scoreService.GetScoreByUserName(session.UserName, session);
+            Score score = this._scoreService.GetScoreByUserName(session);
             TicTacToeMenuOption option = this._ticTacToeView.GetMenuOption(session, score.TotalPoints, score.Wins);
 
             switch (option)
@@ -88,7 +88,7 @@ internal class TicTacToeController
     {
         List<GameRecord> gameRecords = this._ticTacToeService.GetGameReplay(session);
 
-        if (gameRecords.Capacity == 0)
+        if (gameRecords.Count == 0)
         {
             this._ticTacToeView.DisplayInfo("No game history found");
             return;
@@ -109,13 +109,13 @@ internal class TicTacToeController
 
     private void DisplayProfile(UserSession session)
     {
-        Score score = this._scoreService.GetScoreByUserName(session.UserName, session);
+        Score score = this._scoreService.GetScoreByUserName(session);
         this._ticTacToeView.DisplayProfile(score);
     }
 
     private void DisplayLeaderBoard(UserSession session)
     {
-        List<(string Username, int TotalPoints, int Wins)> leaderboard = this._scoreService.GetScores(session);
+        List<(string Username, int TotalPoints, int Wins)> leaderboard = this._scoreService.GetTicTacToeLeaderBoard(session);
         this._ticTacToeView.DisplayLeaderBoard(session.UserName, leaderboard);
     }
 

@@ -161,6 +161,8 @@ internal class TicTacToeView
                     ? gameRecord.PlayerOneName
                     : gameRecord.PlayerTwoName;
 
+                AnsiConsole.MarkupLine($"[grey]Move {moveIndex + 1}/{gameRecord.Moves.Count} | {playerName} - {currentMove.Symbol} {currentMove.Timestamp}[/]");
+
                 ConsoleKey key = Console.ReadKey().Key;
 
                 if (key == ConsoleKey.Escape || key == ConsoleKey.Q)
@@ -187,8 +189,6 @@ internal class TicTacToeView
 
                     this.UpdateBoard(previousMove.Symbol);
                 }
-
-                AnsiConsole.MarkupLine($"[grey]Move {moveIndex + 1}/{gameRecord.Moves.Count} | {playerName} - {currentMove.Symbol} {currentMove.Timestamp}[/]");
             }
 
             string outcomeText = string.IsNullOrWhiteSpace(gameRecord.WinnerName)
@@ -241,7 +241,7 @@ internal class TicTacToeView
     {
         AnsiConsole.Clear();
 
-        Banner("MAIN MENU", session.UserName, totalPoints, wins);
+        this.Banner("MAIN MENU", session.UserName, totalPoints, wins);
 
         var mainMenu = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
@@ -403,8 +403,8 @@ internal class TicTacToeView
 
         Ui.Banner(
             "STATISTICS",
-            $"Game played: [grey]{score.Wins + score.Losses + score.Draws}[/]\n" +
-            $"Wins: [green]{score.Wins}[/]\nLosses: [red]{score.Losses}[/]\n" +
+            $"Game played: [grey]{score.SnakeWaterGunWins + score.Losses + score.Draws}[/]\n" +
+            $"Wins: [green]{score.SnakeWaterGunWins}[/]\nLosses: [red]{score.Losses}[/]\n" +
             $"Draws: [yellow]{score.Draws}[/]\nTotal points: [yellow]{score.TotalPoints}[/]\n");
 
         var chart = new BarChart()

@@ -1,4 +1,6 @@
-﻿using TicTacToe.Models.Enums;
+﻿using TicTacToe.Models;
+using TicTacToe.Models.Enums;
+using TicTacToe.Repositories;
 
 namespace TicTacToe.Services;
 
@@ -18,6 +20,57 @@ internal class SnakeWaterGunService
     public const int ComputerWins = -1;
 
     private readonly Random _random = new Random();
+    private readonly RepositorySelector _repositorySelector;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SnakeWaterGunService"/> class.
+    /// </summary>
+    /// <param name="repositorySelector">The repositor selector instance.</param>
+    public SnakeWaterGunService(RepositorySelector repositorySelector)
+    {
+        this._repositorySelector = repositorySelector;
+    }
+
+    /// <summary>
+    /// Saves the game in repository.
+    /// </summary>
+    /// <param name="session">The user session</param>
+    /// <param name="bestOf">The best of matches.</param>
+    /// <param name="userScore">The score scored by the user.</param>
+    /// <param name="computerScore">Scores gained by the computer.</param>
+    public void SaveGame(UserSession session, int bestOf, int userScore, int computerScore)
+    {
+        string winner = userScore > computerScore ? session.UserName : "Computer";
+
+        GameRecord gameRecord = new GameRecord()
+        {
+            GameType = GameType.SnakeWaterGun,
+            PlayerOneName = session.UserName,
+            PlayerTwoName = "Computer",
+            PlayerOneScore = userScore,
+            PlayerTwoScore = computerScore,
+            WinnerName = winner,
+            PlayedAt = DateTime.UtcNow,
+            EndReason = EndReason.Normal,
+        };
+
+        this._repositorySelector.GetGameRepository(session).AddGameRecord(gameRecord);
+    }
+
+    /// <summary>
+    /// Gets the game history.
+    /// </summary>
+    /// <param name="session">The user session.</param>
+    /// <returns>The list of the game records.</returns>
+    public List<GameRecord> GetGameHistory(UserSession session)
+    {
+        return this._repositorySelector.GetGameRepository(session)
+            .GetByUserName(session.UserName)
+            .Where(x => x.GameType == GameType.SnakeWaterGun)
+            .OrderByDescending(x => x.PlayedAt)
+            .Take(100)
+            .ToList();
+    }
 
     /// <summary>
     /// Determines the winners in the game.

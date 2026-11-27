@@ -1,4 +1,5 @@
 ﻿using Spectre.Console;
+using TicTacToe.Models;
 using TicTacToe.Models.Enums;
 
 namespace TicTacToe.Views;
@@ -155,13 +156,162 @@ internal class SnakeWaterGunView
         var mainMenu = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Select an option to continue")
-                    .AddChoices("Play New Game", "History"));
+                    .AddChoices("Play New Game", "History", "Leaderboard", "Profile", "Back"));
 
         return mainMenu switch
         {
             "Play New Game" => SnakeWaterGunMenuOption.NewGame,
             "History" => SnakeWaterGunMenuOption.History,
+            "Leaderboard" => SnakeWaterGunMenuOption.Leaderboard,
+            "Profile" => SnakeWaterGunMenuOption.Profile,
+            "Back" => SnakeWaterGunMenuOption.Back,
             _ => throw new InvalidOperationException("Invalid choice")
         };
+    }
+
+    /// <summary>
+    /// Displays the top 100 game history.
+    /// </summary>
+    /// <param name="gameRecords">The list of game records.</param>
+    /// <param name="session">User session</param>
+    internal void DisplayHistory(List<GameRecord> gameRecords, UserSession session)
+    {
+        Ui.Title("HISTORY");
+
+        if (gameRecords == null || !gameRecords.Any())
+        {
+            AnsiConsole.MarkupLine("[yellow]No game history found.[/]");
+            return;
+        }
+
+        var table = new Table()
+            .Border(TableBorder.Rounded)
+            .AddColumn("Game No")
+            .AddColumn("Date")
+            .AddColumn("Result")
+            .AddColumn("Score");
+
+        int i = 1;
+
+        foreach (var game in gameRecords.OrderByDescending(g => g.PlayedAt).Take(100))
+        {
+            string result;
+            int score = 0;
+
+            if (game.EndReason == EndReason.Quit)
+            {
+                result = "[grey]QUIT[/]";
+                score = 0;
+            }
+            else if (game.WinnerName == session.UserName)
+            {
+                result = "[green]WIN[/]";
+                score = 1;
+            }
+            else
+            {
+                result = "[red]LOSS[/]";
+                score = 0;
+            }
+
+            table.AddRow(
+                i.ToString(),
+                game.PlayedAt.ToString("dd-MM-yyyy"),
+                result,
+                score.ToString());
+
+            i++;
+        }
+
+        AnsiConsole.Write(table);
+    }
+
+    /// <summary>
+    /// Displays the leader board.
+    /// </summary>
+    /// <param name="userName">The username of the player.</param>
+    /// <param name="leaderboard">The leaderboard data.</param>
+    internal void DisplayLeaderBoard(string userName, List<(string Username, int TotalPoints, int Wins)> leaderboard)
+    {
+        AnsiConsole.Clear();
+        Ui.Title("LEADERBOARD (TOP 20)");
+
+        if (leaderboard.Count == 0)
+        {
+            Ui.Info("No scores recorded yet.\n");
+            Ui.Pause();
+            return;
+        }
+
+        Table table = new Table()
+            .Border(TableBorder.Rounded)
+            .BorderColor(Color.Aqua);
+
+        table.AddColumn(new TableColumn("[bold yellow]Rank[/]").Centered());
+        table.AddColumn(new TableColumn("[bold yellow]Username[/]").LeftAligned());
+        table.AddColumn(new TableColumn("[bold yellow]Total Points[/]").Centered());
+        table.AddColumn(new TableColumn("[bold yellow]Wins[/]").Centered());
+
+        for (int i = 0; i < leaderboard.Count; i++)
+        {
+            var entry = leaderboard[i];
+            int rank = i + 1;
+            bool isCurrentUser = entry.Username.Equals(userName, StringComparison.OrdinalIgnoreCase);
+
+            if (isCurrentUser)
+            {
+                table.AddRow(
+                    $"[aqua] #{rank} [/]",
+                    $"[aqua] {Markup.Escape(entry.Username)} (You) [/]",
+                    $"[aqua] {entry.TotalPoints} [/]",
+                    $"[aqua] {entry.Wins} [/]");
+            }
+            else
+            {
+                string rankColor = rank switch
+                {
+                    1 => "bold gold1",
+                    2 => "bold silver",
+                    3 => "bold yellow",
+                    _ => "grey"
+                };
+
+                table.AddRow(
+                    $"[{rankColor}]#{rank}[/]",
+                    $"[white]{entry.Username}[/]",
+                    $"[yellow]{entry.TotalPoints}[/]",
+                    $"[green]{entry.Wins}[/]");
+            }
+        }
+
+        AnsiConsole.Write(table);
+    }
+
+    /// <summary>
+    /// Displays the message.
+    /// </summary>
+    /// <param name="message">The message to be displayed.</param>
+    internal void DisplayInfo(string message)
+    {
+        Ui.Info(message);
+    }
+
+    /// <summary>
+    /// Displays the profile
+    /// </summary>
+    /// <param name="score">The score of the user.</param>
+    internal void DisplayProfile(Score score)
+    {
+        AnsiConsole.Clear();
+
+        Ui.Banner(
+            "PROFILE",
+            $"Username: [grey]{score.Username}[/]\n");
+
+        Ui.Banner(
+            "STATISTICS",
+            $"Game played: [grey]{score.SnakeWaterGunWins + score.SnakeWaterGunLosses}[/]\n" +
+            $"Wins: [green]{score.SnakeWaterGunWins}[/]\nLosses: [red]{score.SnakeWaterGunLosses}[/]\n" +
+            $"Total points: [yellow]{score.SnakeWaterGunPoints}[/]\n");
     }
 }
