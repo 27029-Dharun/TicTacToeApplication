@@ -141,4 +141,27 @@ internal class SnakeWaterGunView
             .Title("[bold yellow]Enter your choice (Snake, Water, Gun):[/]")
             .AddChoices(Enum.GetValues<SnakeWaterGunChoice>()));
     }
+
+    /// <summary>
+    /// Gets the menu option from the user.
+    /// </summary>
+    /// <returns>The option selected by the user.</returns>
+    internal SnakeWaterGunMenuOption GetMenuOption()
+    {
+        AnsiConsole.Clear();
+
+        Ui.Title("SNAKE WATER GUN");
+
+        var mainMenu = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Select an option to continue")
+                    .AddChoices("Play New Game", "History"));
+
+        return mainMenu switch
+        {
+            "Play New Game" => SnakeWaterGunMenuOption.NewGame,
+            "History" => SnakeWaterGunMenuOption.History,
+            _ => throw new InvalidOperationException("Invalid choice")
+        };
+    }
 }

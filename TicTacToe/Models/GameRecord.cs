@@ -8,12 +8,6 @@ namespace TicTacToe.Models;
 internal class GameRecord
 {
     /// <summary>
-    /// Gets or sets the unique identifier for the game record.
-    /// </summary>
-    /// <value>The unique identifier for the game record.</value>
-    public Guid GameId { get; set; } = Guid.NewGuid();
-
-    /// <summary>
     /// Gets or sets the player names for the game record.
     /// </summary>
     /// <value>The name of the player.</value>

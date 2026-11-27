@@ -32,6 +32,27 @@ internal class SnakeWaterGunController
     {
         while (true)
         {
+            SnakeWaterGunMenuOption option = this._snakeWaterGunView.GetMenuOption();
+
+            switch (option)
+            {
+                case SnakeWaterGunMenuOption.NewGame:
+                    this.StartGame(session);
+                    break;
+
+                case SnakeWaterGunMenuOption.History:
+                    break;
+
+                case SnakeWaterGunMenuOption.Back:
+                    return;
+            }
+        }
+    }
+
+    private void StartGame(UserSession session)
+    {
+        while (true)
+        {
             this._snakeWaterGunView.DisplayGameInstructions();
             int bestOf = (int)this._snakeWaterGunView.GetBestOfChoice();
 
