@@ -393,21 +393,22 @@ internal class TicTacToeView
     /// Displays the user profile.
     /// </summary>
     /// <param name="score">The score records of the player.</param>
-    internal void DisplayProfile(Score score)
+    /// <param name="username">The username of the player.</param>
+    internal void DisplayProfile(TicTacToeStats score, string username)
     {
         AnsiConsole.Clear();
 
         Ui.Banner(
             "PROFILE",
-            $"Username: [grey]{score.Username}[/]\n");
+            $"Username: [grey]{username}[/]\n");
 
         Ui.Banner(
             "STATISTICS",
-            $"Game played: [grey]{score.Wins + score.Losses + score.Draws}[/]\n" +
+            $"Game played: [grey]{score.GamePlayed}[/]\n" +
             $"Wins: [green]{score.Wins}[/]\n+" +
             $"Losses: [red]{score.Losses}[/]\n" +
             $"Draws: [yellow]{score.Draws}[/]\n" +
-            $"Total points: [yellow]{score.TotalPoints}[/]\n");
+            $"Total points: [yellow]{score.Points}[/]\n");
 
         var chart = new BarChart()
         .Width(50)

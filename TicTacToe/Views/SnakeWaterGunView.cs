@@ -227,7 +227,7 @@ internal class SnakeWaterGunView
     /// </summary>
     /// <param name="userName">The username of the player.</param>
     /// <param name="leaderboard">The leaderboard data.</param>
-    internal void DisplayLeaderBoard(string userName, List<(string Username, int TotalPoints, int Wins)> leaderboard)
+    internal void DisplayLeaderBoard(string userName, List<(string Username, int TotalPoints)> leaderboard)
     {
         AnsiConsole.Clear();
         Ui.Title("LEADERBOARD (TOP 20)");
@@ -245,7 +245,6 @@ internal class SnakeWaterGunView
         table.AddColumn(new TableColumn("[bold yellow]Rank[/]").Centered());
         table.AddColumn(new TableColumn("[bold yellow]Username[/]").LeftAligned());
         table.AddColumn(new TableColumn("[bold yellow]Total Points[/]").Centered());
-        table.AddColumn(new TableColumn("[bold yellow]Wins[/]").Centered());
 
         for (int i = 0; i < leaderboard.Count; i++)
         {
@@ -258,8 +257,7 @@ internal class SnakeWaterGunView
                 table.AddRow(
                     $"[aqua] #{rank} [/]",
                     $"[aqua] {Markup.Escape(entry.Username)} (You) [/]",
-                    $"[aqua] {entry.TotalPoints} [/]",
-                    $"[aqua] {entry.Wins} [/]");
+                    $"[aqua] {entry.TotalPoints} [/]");
             }
             else
             {
@@ -274,8 +272,7 @@ internal class SnakeWaterGunView
                 table.AddRow(
                     $"[{rankColor}]#{rank}[/]",
                     $"[white]{entry.Username}[/]",
-                    $"[yellow]{entry.TotalPoints}[/]",
-                    $"[green]{entry.Wins}[/]");
+                    $"[yellow]{entry.TotalPoints}[/]");
             }
         }
 
@@ -295,18 +292,19 @@ internal class SnakeWaterGunView
     /// Displays the profile
     /// </summary>
     /// <param name="score">The score of the user.</param>
-    internal void DisplayProfile(Score score)
+    /// <param name="username">The username of the player.</param>
+    internal void DisplayProfile(GameStats score, string username)
     {
         AnsiConsole.Clear();
 
         Ui.Banner(
             "PROFILE",
-            $"Username: [grey]{score.Username}[/]\n");
+            $"Username: [grey]{username}[/]\n");
 
         Ui.Banner(
             "STATISTICS",
-            $"Game played: [grey]{score.SnakeWaterGunWins + score.SnakeWaterGunLosses}[/]\n" +
-            $"Wins: [green]{score.SnakeWaterGunWins}[/]\nLosses: [red]{score.SnakeWaterGunLosses}[/]\n" +
-            $"Total points: [yellow]{score.SnakeWaterGunPoints}[/]\n");
+            $"Game played: [grey]{score.GamePlayed}[/]\n" +
+            $"Wins: [green]{score.Wins}[/]\nLosses: [red]{score.Losses}[/]\n" +
+            $"Total points: [yellow]{score.Points}[/]\n");
     }
 }

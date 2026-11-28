@@ -71,13 +71,13 @@ internal class SnakeWaterGunController
 
     private void DisplayProfile(UserSession session)
     {
-        Score scores = this._scoreService.GetScoreByUserName(session);
-        this._snakeWaterGunView.DisplayProfile(scores);
+        GameStats scores = this._scoreService.GetScoreByUserName(session, GameType.SnakeWaterGun);
+        this._snakeWaterGunView.DisplayProfile(scores, session.UserName);
     }
 
     private void DisplayLeaderboard(UserSession session)
     {
-        List<(string Username, int TotalPoints, int Wins)> scores = this._scoreService.GetSnakeWaterGunLeaderBoard(session);
+        List<(string Username, int TotalPoints)> scores = this._scoreService.GetSnakeWaterGunLeaderBoard(session);
         this._snakeWaterGunView.DisplayLeaderBoard(session.UserName, scores);
     }
 

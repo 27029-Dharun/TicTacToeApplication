@@ -1,4 +1,5 @@
-﻿using TicTacToe.Models;
+﻿using TicTacToe.Constants;
+using TicTacToe.Models;
 using TicTacToe.Models.Enums;
 using TicTacToe.Repositories;
 
@@ -9,8 +10,6 @@ namespace TicTacToe.Services;
 /// </summary>
 internal class ScoreService
 {
-    private const int PointForTicTacToeDraw = 1;
-    private const int PointForSnakeWaterGunWin = 1;
     private readonly RepositorySelector _scoreRepository;
 
     /// <summary>
@@ -30,11 +29,11 @@ internal class ScoreService
     public List<(string Username, int TotalPoints, int Wins)> GetTicTacToeLeaderBoard(UserSession session)
     {
         return this._scoreRepository.GetScoreRepository(session).GetAll()
-            .Where(s => s.TotalPoints > 0)
-            .OrderByDescending(s => s.TotalPoints)
-            .ThenByDescending(s => s.Wins)
+            .Where(s => s.TicTacToeStats.Points > 0)
+            .OrderByDescending(s => s.TicTacToeStats.Points)
+            .ThenByDescending(s => s.TicTacToeStats.Wins)
             .Take(20)
-            .Select(s => (s.Username, s.TotalPoints, s.Wins))
+            .Select(s => (s.Username, s.TicTacToeStats.Points, s.TicTacToeStats.Wins))
             .ToList();
     }
 
@@ -43,14 +42,14 @@ internal class ScoreService
     /// </summary>
     /// <param name="session">User session.</param>
     /// <returns>The list of tuple with username, total points, wins.</returns>
-    public List<(string Username, int TotalPoints, int Wins)> GetSnakeWaterGunLeaderBoard(UserSession session)
+    public List<(string Username, int TotalPoints)> GetSnakeWaterGunLeaderBoard(UserSession session)
     {
         return this._scoreRepository.GetScoreRepository(session).GetAll()
-            .Where(s => s.SnakeWaterGunWins > 0)
-            .OrderByDescending(s => s.SnakeWaterGunPoints)
-            .ThenByDescending(s => s.SnakeWaterGunWins)
+            .Where(s => s.SnakeWaterGunStats.Wins > 0)
+            .OrderByDescending(s => s.SnakeWaterGunStats.Points)
+            .ThenByDescending(s => s.SnakeWaterGunStats.GamePlayed)
             .Take(20)
-            .Select(s => (s.Username, s.SnakeWaterGunPoints, s.SnakeWaterGunWins))
+            .Select(s => (s.Username, s.SnakeWaterGunStats.Points))
             .ToList();
     }
 
@@ -58,10 +57,20 @@ internal class ScoreService
     /// Gets the score of the user.
     /// </summary>
     /// <param name="session">The user session.</param>
+    /// <param name="type">The game type.</param>
     /// <returns>The score of the user.</returns>
-    public Score GetScoreByUserName(UserSession session)
+    public GameStats GetScoreByUserName(UserSession session, GameType type)
     {
-        return this._scoreRepository.GetScoreRepository(session).GetScore(session.UserName);
+        Score score = this._scoreRepository.GetScoreRepository(session).GetScore(session.UserName);
+
+        if (type == GameType.TicTacToe)
+        {
+            return score.TicTacToeStats;
+        }
+        else
+        {
+            return score.SnakeWaterGunStats;
+        }
     }
 
     /// <summary>
@@ -70,14 +79,14 @@ internal class ScoreService
     /// <param name="userName">The username of the player.</param>
     /// <param name="mode">Game mode played.</param>
     /// <param name="session">The user session.</param>
-    public void RecordWin(string userName, GameMode mode, UserSession session)
+    public void RecordTicTacToeWin(string userName, GameMode mode, UserSession session)
     {
         Score playerScore = this._scoreRepository.GetScoreRepository(session).GetScore(userName);
-        int pointsEarned = this.GetPointsForMode(mode);
+        int pointsEarned = Configurable.GetPointsForMode(mode);
 
-        playerScore.Wins++;
-        playerScore.TotalPoints += pointsEarned;
-        playerScore.PointsByMode[mode] = playerScore.PointsByMode.GetValueOrDefault(mode) + pointsEarned;
+        playerScore.TicTacToeStats.Wins++;
+        playerScore.TicTacToeStats.Points += pointsEarned;
+        playerScore.TicTacToeStats.PointsByMode[mode] = playerScore.TicTacToeStats.PointsByMode.GetValueOrDefault(mode) + pointsEarned;
 
         this._scoreRepository.GetScoreRepository(session).SaveScore(playerScore);
     }
@@ -87,10 +96,10 @@ internal class ScoreService
     /// </summary>
     /// <param name="userName">The username of the player.</param>
     /// <param name="session">The user session.</param>
-    public void RecordLoss(string userName, UserSession session)
+    public void RecordTicTacToeLoss(string userName, UserSession session)
     {
         Score playerScore = this._scoreRepository.GetScoreRepository(session).GetScore(userName);
-        playerScore.Losses++;
+        playerScore.SnakeWaterGunStats.Losses++;
 
         this._scoreRepository.GetScoreRepository(session).SaveScore(playerScore);
     }
@@ -101,12 +110,12 @@ internal class ScoreService
     /// <param name="userName">The username of the player.</param>
     /// <param name="mode">Game mode of the user.</param>
     /// <param name="session">The user session.</param>
-    public void RecordDraw(string userName, GameMode mode, UserSession session)
+    public void RecordTicTacToeDraw(string userName, GameMode mode, UserSession session)
     {
         Score playerScore = this._scoreRepository.GetScoreRepository(session).GetScore(userName);
-        playerScore.Draws++;
-        playerScore.TotalPoints += PointForTicTacToeDraw;
-        playerScore.PointsByMode[mode] = playerScore.PointsByMode.GetValueOrDefault(mode) + 1;
+        playerScore.TicTacToeStats.Draws++;
+        playerScore.TicTacToeStats.Points += Configurable.PointForTicTacToeDraw;
+        playerScore.TicTacToeStats.PointsByMode[mode] = playerScore.TicTacToeStats.PointsByMode.GetValueOrDefault(mode) + 1;
 
         this._scoreRepository.GetScoreRepository(session).SaveScore(playerScore);
     }
@@ -119,8 +128,8 @@ internal class ScoreService
     {
         Score playerScore = this._scoreRepository.GetScoreRepository(session).GetScore(session.UserName);
 
-        playerScore.SnakeWaterGunWins++;
-        playerScore.SnakeWaterGunPoints += PointForSnakeWaterGunWin;
+        playerScore.SnakeWaterGunStats.Wins++;
+        playerScore.TicTacToeStats.Points += Configurable.PointForSnakeWaterGunWin;
 
         this._scoreRepository.GetScoreRepository(session).SaveScore(playerScore);
     }
@@ -133,7 +142,7 @@ internal class ScoreService
     {
         Score playerScore = this._scoreRepository.GetScoreRepository(session).GetScore(session.UserName);
 
-        playerScore.SnakeWaterGunLosses++;
+        playerScore.SnakeWaterGunStats.Losses++;
 
         this._scoreRepository.GetScoreRepository(session).SaveScore(playerScore);
     }
@@ -145,17 +154,5 @@ internal class ScoreService
     internal void ClearGuestData(UserSession session)
     {
         this._scoreRepository.ClearGuest(session);
-    }
-
-    private int GetPointsForMode(GameMode mode)
-    {
-        return mode switch
-        {
-            GameMode.Easy => 1,
-            GameMode.Medium => 2,
-            GameMode.Hard => 3,
-            GameMode.Manual => 2,
-            _ => 0
-        };
     }
 }

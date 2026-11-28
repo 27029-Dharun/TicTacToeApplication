@@ -34,7 +34,7 @@ internal class InMemoryScoreRepository : IScoreRepository
     /// <inheritdoc/>
     public Score GetScore(string username)
     {
-        return this._scores.FirstOrDefault(s => s.Username == username) ?? new Score(username, 0, 0, 0, 0);
+        return this._scores.FirstOrDefault(s => s.Username == username) ?? new Score(username);
     }
 
     /// <summary>
