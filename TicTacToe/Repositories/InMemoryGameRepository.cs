@@ -6,18 +6,20 @@ namespace TicTacToe.Repositories;
 /// <summary>
 /// Stores the game record in in-memory.
 /// </summary>
-internal class InMemoryGameRepository : IGameRepository
+/// <typeparam name="T">The type parameter of the game.</typeparam>
+internal class InMemoryGameRepository<T> : IGameRepository<T>
+    where T : GameRecord
 {
-    private readonly List<GameRecord> _games = new List<GameRecord>();
+    private readonly List<T> _games = new List<T>();
 
     /// <inheritdoc/>
-    public void AddGameRecord(GameRecord gameRecord)
+    public void AddGameRecord(T gameRecord)
     {
         this._games.Add(gameRecord);
     }
 
     /// <inheritdoc/>
-    public List<GameRecord> GetByUserName(string userName)
+    public List<T> GetByUserName(string userName)
     {
         return this._games.Where(x => x.PlayerOneName == userName || x.PlayerTwoName == userName).ToList();
     }

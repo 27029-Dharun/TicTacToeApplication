@@ -26,11 +26,10 @@ internal class TicTacToeService
     /// </summary>
     /// <param name="session">The user session of the user.</param>
     /// <returns>The list of game record.</returns>
-    internal List<GameRecord> GetGameHistory(UserSession session)
+    internal List<TicTacToeGameRecord> GetGameHistory(UserSession session)
     {
-        return this._repositorySelector.GetGameRepository(session)
+        return this._repositorySelector.GetTicTacToeRepository(session)
             .GetByUserName(session.UserName)
-            .Where(x => x.GameType == GameType.TicTacToe)
             .OrderByDescending(x => x.PlayedAt)
             .Take(100)
             .ToList();
@@ -41,11 +40,10 @@ internal class TicTacToeService
     /// </summary>
     /// <param name="session">The game session of the user.</param>
     /// <returns>List of the game record.</returns>
-    internal List<GameRecord> GetGameReplay(UserSession session)
+    internal List<TicTacToeGameRecord> GetGameReplay(UserSession session)
     {
-        return this._repositorySelector.GetGameRepository(session)
+        return this._repositorySelector.GetTicTacToeRepository(session)
             .GetByUserName(session.UserName)
-            .Where(x => x.GameType == GameType.TicTacToe)
             .OrderByDescending(x => x.PlayedAt)
             .Take(10)
             .ToList();
@@ -138,11 +136,10 @@ internal class TicTacToeService
     /// <param name="timer">The timer countdown for each move</param>
     /// <param name="session">The user session creating the game.</param>
     /// <returns>The game instance created.</returns>
-    internal GameRecord CreateGame(GameMode mode, TimerOption timer, UserSession session)
+    internal TicTacToeGameRecord CreateGame(GameMode mode, TimerOption timer, UserSession session)
     {
-        GameRecord game = new GameRecord()
+        TicTacToeGameRecord game = new TicTacToeGameRecord()
         {
-            GameType = GameType.TicTacToe,
             PlayerOneName = session.UserName,
             Mode = mode,
             PlayedAt = DateTime.UtcNow,
@@ -171,7 +168,7 @@ internal class TicTacToeService
     /// <param name="game">The game instance created.</param>
     /// <param name="symbol">The symbol of the move.</param>
     /// <param name="position">The position of the move.</param>
-    internal void AddMove(GameRecord game, Symbol symbol, int position)
+    internal void AddMove(TicTacToeGameRecord game, Symbol symbol, int position)
     {
         game.Moves.Add(new MoveRecord
         {
@@ -189,7 +186,7 @@ internal class TicTacToeService
     /// <param name="winnerName">The username of the winner.</param>
     /// <param name="playerOneSession">The user session of player one.</param>
     /// <param name="playerTwoSession">The user session of player two, if available.</param>
-    internal void CompleteAndSaveGame(GameRecord game, EndReason endReason, string? winnerName, UserSession playerOneSession, UserSession? playerTwoSession = null)
+    internal void CompleteAndSaveGame(TicTacToeGameRecord game, EndReason endReason, string? winnerName, UserSession playerOneSession, UserSession? playerTwoSession = null)
     {
         game.EndReason = endReason;
         game.WinnerName = winnerName ?? string.Empty;
@@ -198,8 +195,8 @@ internal class TicTacToeService
 
         if (playerTwoSession is not null)
         {
-            IGameRepository playerOneRepo = this._repositorySelector.GetGameRepository(playerOneSession);
-            IGameRepository playerTwoRepo = this._repositorySelector.GetGameRepository(playerTwoSession);
+            IGameRepository<TicTacToeGameRecord> playerOneRepo = this._repositorySelector.GetTicTacToeRepository(playerOneSession);
+            IGameRepository<TicTacToeGameRecord> playerTwoRepo = this._repositorySelector.GetTicTacToeRepository(playerTwoSession);
 
             if (!ReferenceEquals(playerOneRepo, playerTwoRepo))
             {
@@ -222,8 +219,8 @@ internal class TicTacToeService
     /// </summary>
     /// <param name="session">The user session of the user.</param>
     /// <param name="gameRecord">The game record to add.</param>
-    private void AddGameRecord(UserSession session, GameRecord gameRecord)
+    private void AddGameRecord(UserSession session, TicTacToeGameRecord gameRecord)
     {
-        this._repositorySelector.GetGameRepository(session).AddGameRecord(gameRecord);
+        this._repositorySelector.GetTicTacToeRepository(session).AddGameRecord(gameRecord);
     }
 }

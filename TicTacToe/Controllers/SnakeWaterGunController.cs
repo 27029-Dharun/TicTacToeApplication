@@ -83,7 +83,7 @@ internal class SnakeWaterGunController
 
     private void DisplayHistory(UserSession session)
     {
-        List<GameRecord> history = this._snakeWaterGunService.GetGameHistory(session);
+        List<SnakeWaterGunGameRecord> history = this._snakeWaterGunService.GetGameHistory(session);
         this._snakeWaterGunView.DisplayHistory(history, session);
     }
 

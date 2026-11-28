@@ -16,7 +16,12 @@ internal enum GameOption
     SnakeWaterGun = 2,
 
     /// <summary>
+    /// Represents an option to view and update the profile information.
+    /// </summary>
+    Profile = 3,
+
+    /// <summary>
     /// Represents an option to logout.
     /// </summary>
-    LogOut = 3,
+    LogOut = 4,
 }

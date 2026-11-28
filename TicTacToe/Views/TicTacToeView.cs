@@ -36,7 +36,7 @@ internal class TicTacToeView
     /// <param name="board">The board state.</param>
     /// <param name="game">Game record name.</param>
     /// <param name="gameLoop">Game loop logic.</param>
-    internal void RunMatch(Symbol[] board, GameRecord game, Action gameLoop)
+    internal void RunMatch(Symbol[] board, TicTacToeGameRecord game, Action gameLoop)
     {
         this._board = board;
         this._firstPlayerName = game.PlayerOneName;
@@ -138,7 +138,7 @@ internal class TicTacToeView
     /// Replays the game with the records.
     /// </summary>
     /// <param name="gameRecord">The game records to be played.</param>
-    internal void ReplayGame(GameRecord gameRecord)
+    internal void ReplayGame(TicTacToeGameRecord gameRecord)
     {
         if (gameRecord.Moves == null || gameRecord.Moves.Count == 0)
         {
@@ -404,7 +404,7 @@ internal class TicTacToeView
 
         Ui.Banner(
             "STATISTICS",
-            $"Game played: [grey]{score.GamePlayed}[/]\n" +
+            $"Game played: [grey]{score.Wins + score.Losses + score.Draws}[/]\n" +
             $"Wins: [green]{score.Wins}[/]\n+" +
             $"Losses: [red]{score.Losses}[/]\n" +
             $"Draws: [yellow]{score.Draws}[/]\n" +
@@ -436,7 +436,7 @@ internal class TicTacToeView
     /// </summary>
     /// <param name="gameRecords">The list of game records.</param>
     /// <param name="session">User session</param>
-    internal void DisplayHistory(List<GameRecord> gameRecords, UserSession session)
+    internal void DisplayHistory(List<TicTacToeGameRecord> gameRecords, UserSession session)
     {
         Ui.Title("HISTORY");
 

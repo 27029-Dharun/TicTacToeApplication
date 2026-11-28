@@ -174,7 +174,7 @@ internal class SnakeWaterGunView
     /// </summary>
     /// <param name="gameRecords">The list of game records.</param>
     /// <param name="session">User session</param>
-    internal void DisplayHistory(List<GameRecord> gameRecords, UserSession session)
+    internal void DisplayHistory(List<SnakeWaterGunGameRecord> gameRecords, UserSession session)
     {
         Ui.Title("HISTORY");
 
@@ -303,7 +303,7 @@ internal class SnakeWaterGunView
 
         Ui.Banner(
             "STATISTICS",
-            $"Game played: [grey]{score.GamePlayed}[/]\n" +
+            $"Game played: [grey]{score.Wins + score.Losses}[/]\n" +
             $"Wins: [green]{score.Wins}[/]\nLosses: [red]{score.Losses}[/]\n" +
             $"Total points: [yellow]{score.Points}[/]\n");
     }

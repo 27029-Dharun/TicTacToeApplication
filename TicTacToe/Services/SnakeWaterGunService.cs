@@ -42,9 +42,8 @@ internal class SnakeWaterGunService
     {
         string winner = userScore > computerScore ? session.UserName : "Computer";
 
-        GameRecord gameRecord = new GameRecord()
+        SnakeWaterGunGameRecord gameRecord = new SnakeWaterGunGameRecord()
         {
-            GameType = GameType.SnakeWaterGun,
             BestOf = bestOf,
             PlayerOneName = session.UserName,
             PlayerTwoName = "Computer",
@@ -55,7 +54,7 @@ internal class SnakeWaterGunService
             EndReason = EndReason.Normal,
         };
 
-        this._repositorySelector.GetGameRepository(session).AddGameRecord(gameRecord);
+        this._repositorySelector.GetSnakeWaterGunRepository(session).AddGameRecord(gameRecord);
     }
 
     /// <summary>
@@ -63,11 +62,10 @@ internal class SnakeWaterGunService
     /// </summary>
     /// <param name="session">The user session.</param>
     /// <returns>The list of the game records.</returns>
-    public List<GameRecord> GetGameHistory(UserSession session)
+    public List<SnakeWaterGunGameRecord> GetGameHistory(UserSession session)
     {
-        return this._repositorySelector.GetGameRepository(session)
+        return this._repositorySelector.GetSnakeWaterGunRepository(session)
             .GetByUserName(session.UserName)
-            .Where(x => x.GameType == GameType.SnakeWaterGun)
             .OrderByDescending(x => x.PlayedAt)
             .Take(100)
             .ToList();

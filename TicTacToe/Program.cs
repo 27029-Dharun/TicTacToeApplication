@@ -1,4 +1,5 @@
 ﻿using TicTacToe.Controllers;
+using TicTacToe.Models;
 using TicTacToe.Repositories;
 using TicTacToe.Repositories.Interfaces;
 using TicTacToe.Services;
@@ -23,10 +24,12 @@ internal class Program
         JsonScoreRepository jsonScoreRepository = new JsonScoreRepository(jsonFileManager, "Score.json");
         InMemoryScoreRepository inMemoryScoreRepository = new InMemoryScoreRepository();
 
-        JsonGameRepository jsonGameRepository = new JsonGameRepository(jsonFileManager, "Game.json");
-        InMemoryGameRepository inMemoryGameRepository = new InMemoryGameRepository();
+        JsonGameRepository<TicTacToeGameRecord> jsonTicTacToeRepository = new JsonGameRepository<TicTacToeGameRecord>(jsonFileManager, "TicTacToe.json");
+        JsonGameRepository<SnakeWaterGunGameRecord> jsonSnakeWaterGunRepository = new JsonGameRepository<SnakeWaterGunGameRecord>(jsonFileManager, "SnakeWaterGun.json");
+        InMemoryGameRepository<TicTacToeGameRecord> inMemoryTicTacToeRepository = new InMemoryGameRepository<TicTacToeGameRecord>();
+        InMemoryGameRepository<SnakeWaterGunGameRecord> inMemorySnakeWaterGunRepository = new InMemoryGameRepository<SnakeWaterGunGameRecord>();
 
-        RepositorySelector repositorySelector = new RepositorySelector(jsonScoreRepository, inMemoryScoreRepository, jsonGameRepository, inMemoryGameRepository);
+        RepositorySelector repositorySelector = new RepositorySelector(jsonScoreRepository, inMemoryScoreRepository, jsonTicTacToeRepository, inMemoryTicTacToeRepository, jsonSnakeWaterGunRepository, inMemorySnakeWaterGunRepository);
 
         ScoreService scoreService = new ScoreService(repositorySelector);
         TicTacToeService gameService = new TicTacToeService(repositorySelector);

@@ -7,6 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Services\trqr3vrq.1ns~" />
+  </ItemGroup>
+
   <ItemGroup Label="CSharpAnalyser">
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="Spectre.Console" Version="0.57.2" />

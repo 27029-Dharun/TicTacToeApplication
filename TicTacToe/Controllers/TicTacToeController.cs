@@ -86,7 +86,7 @@ internal class TicTacToeController
 
     private void HandleReplay(UserSession session)
     {
-        List<GameRecord> gameRecords = this._ticTacToeService.GetGameReplay(session);
+        List<TicTacToeGameRecord> gameRecords = this._ticTacToeService.GetGameReplay(session);
 
         if (gameRecords.Count == 0)
         {
@@ -103,7 +103,7 @@ internal class TicTacToeController
 
     private void DisplayHistory(UserSession session)
     {
-        List<GameRecord> gameRecords = this._ticTacToeService.GetGameHistory(session);
+        List<TicTacToeGameRecord> gameRecords = this._ticTacToeService.GetGameHistory(session);
         this._ticTacToeView.DisplayHistory(gameRecords, session);
     }
 
@@ -135,7 +135,7 @@ internal class TicTacToeController
     /// <param name="session">User session.</param>
     private void StartGame(GameMode mode, TimerOption timer, UserSession session)
     {
-        GameRecord game = this._ticTacToeService.CreateGame(mode, timer, session);
+        TicTacToeGameRecord game = this._ticTacToeService.CreateGame(mode, timer, session);
 
         if (mode == GameMode.Manual)
         {
@@ -158,7 +158,7 @@ internal class TicTacToeController
         }
     }
 
-    private void StartComputerGame(GameRecord game, UserSession session)
+    private void StartComputerGame(TicTacToeGameRecord game, UserSession session)
     {
         Symbol[] board = this.CreateBoard();
         Symbol currentTurn = Symbol.X;
@@ -227,7 +227,7 @@ internal class TicTacToeController
         }
     }
 
-    private void StartManualGame(GameRecord game, UserSession playerOneSession, UserSession playerTwoSession)
+    private void StartManualGame(TicTacToeGameRecord game, UserSession playerOneSession, UserSession playerTwoSession)
     {
         Symbol[] board = this.CreateBoard();
         Symbol currentTurn = Symbol.X;
@@ -290,7 +290,7 @@ internal class TicTacToeController
         return Enumerable.Repeat(Symbol.Empty, 9).ToArray();
     }
 
-    private void HandleManualWinner(GameRecord game, UserSession playerOneSession, UserSession playerTwoSession, GameMode mode, Symbol winner)
+    private void HandleManualWinner(TicTacToeGameRecord game, UserSession playerOneSession, UserSession playerTwoSession, GameMode mode, Symbol winner)
     {
         if (winner == game.PlayerOneSymbol)
         {
@@ -308,7 +308,7 @@ internal class TicTacToeController
         }
     }
 
-    private void HandleComputerWin(GameRecord game, UserSession session, Symbol winner)
+    private void HandleComputerWin(TicTacToeGameRecord game, UserSession session, Symbol winner)
     {
         if (winner == game.PlayerOneSymbol)
         {
@@ -324,7 +324,7 @@ internal class TicTacToeController
         }
     }
 
-    private void HandleManualTimeOut(GameRecord game, Symbol currentTurn, UserSession playerOneSession, UserSession playerTwoSession, GameMode mode)
+    private void HandleManualTimeOut(TicTacToeGameRecord game, Symbol currentTurn, UserSession playerOneSession, UserSession playerTwoSession, GameMode mode)
     {
         if (currentTurn == game.PlayerOneSymbol)
         {

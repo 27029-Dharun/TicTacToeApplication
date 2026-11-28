@@ -24,10 +24,4 @@ internal class TicTacToeStats : GameStats
         { GameMode.Hard, 0 },
         { GameMode.Manual, 0 },
     };
-
-    /// <summary>
-    /// Gets the total game played.
-    /// </summary>
-    /// <value>The total games played.</value>
-    public int GamesPlayed => this.Wins + this.Losses + this.Draws;
 }

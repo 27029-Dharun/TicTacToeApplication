@@ -47,7 +47,7 @@ internal class ScoreService
         return this._scoreRepository.GetScoreRepository(session).GetAll()
             .Where(s => s.SnakeWaterGunStats.Wins > 0)
             .OrderByDescending(s => s.SnakeWaterGunStats.Points)
-            .ThenByDescending(s => s.SnakeWaterGunStats.GamePlayed)
+            .ThenByDescending(s => s.SnakeWaterGunStats.Wins + s.SnakeWaterGunStats.Losses)
             .Take(20)
             .Select(s => (s.Username, s.SnakeWaterGunStats.Points))
             .ToList();
@@ -129,7 +129,7 @@ internal class ScoreService
         Score playerScore = this._scoreRepository.GetScoreRepository(session).GetScore(session.UserName);
 
         playerScore.SnakeWaterGunStats.Wins++;
-        playerScore.TicTacToeStats.Points += Configurable.PointForSnakeWaterGunWin;
+        playerScore.SnakeWaterGunStats.Points += Configurable.PointForSnakeWaterGunWin;
 
         this._scoreRepository.GetScoreRepository(session).SaveScore(playerScore);
     }
