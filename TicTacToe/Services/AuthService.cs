@@ -25,11 +25,17 @@ internal class AuthService
     /// <param name="userName">The username of the player.</param>
     /// <param name="name">The name of the player.</param>
     /// <param name="password">The password entered by the user.</param>
+    /// <param name="confirmPassword">Confirm password.</param>
     /// <param name="email">The email of the user.</param>
     /// <returns>A tuple with status and message returned from the method.</returns>
-    public (bool success, string message) CreateUser(string userName, string name, string password, string email)
+    public (bool success, string message) CreateUser(string userName, string name, string password, string confirmPassword, string email)
     {
-        if (this._userRepository.Exists(userName) || userName.Equals("Computer", StringComparison.OrdinalIgnoreCase))
+        if (confirmPassword == password)
+        {
+            return (false, "Password didn't match");
+        }
+
+        if (this._userRepository.Exists(userName) || userName.Equals("Computer", StringComparison.OrdinalIgnoreCase) || userName.Equals("Guest", StringComparison.OrdinalIgnoreCase))
         {
             return (false, "Username already exists\n");
         }
@@ -74,5 +80,59 @@ internal class AuthService
     public UserSession LogInGuest()
     {
         return new UserSession("Guest", true);
+    }
+
+    /// <summary>
+    /// Edits the name of the user.
+    /// </summary>
+    /// <param name="name">The name of the user.</param>
+    /// <param name="session">The logged in user session.</param>
+    /// <returns>True if the name changed; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">The argument null exception when username doesn't exists.</exception>
+    internal bool EditName(string name, UserSession session)
+    {
+        User user = this._userRepository.GetUser(session.UserName) ?? throw new ArgumentNullException("Username not found");
+        user.Name = name;
+
+        this._userRepository.UpdateUser(user);
+        return true;
+    }
+
+    /// <summary>
+    /// Edit the password.
+    /// </summary>
+    /// <param name="oldPassword">The old password of the user.</param>
+    /// <param name="password">The password of the user.</param>
+    /// <param name="session">The session of the logged in user.</param>
+    /// <returns>The boolean true if the password changed; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">The argument null exception.</exception>
+    internal bool EditPassword(string oldPassword, string password, UserSession session)
+    {
+        User user = this._userRepository.GetUser(session.UserName) ?? throw new ArgumentNullException("Username not found");
+
+        bool isValid = BCrypt.Net.BCrypt.Verify(password, user.HashedPassword);
+
+        if (!isValid)
+        {
+            return false;
+        }
+
+        user.HashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
+        this._userRepository.UpdateUser(user);
+        return true;
+    }
+
+    /// <summary>
+    /// Gets the user details.
+    /// </summary>
+    /// <param name="userName">The username of the player.</param>
+    /// <returns>The user details of the username.</returns>
+    /// <exception cref="KeyNotFoundException">Thrown when the username is not found.</exception>
+    internal (string userName, string fullName, string email, DateTime joinDate) GetUserDetails(string userName)
+    {
+        User user = this._userRepository.GetUser(userName) ?? throw new KeyNotFoundException();
+
+        return (user.UserName, user.Name, user.Email, user.JoinDate);
     }
 }

@@ -61,32 +61,74 @@ internal class AppController
     {
         while (true)
         {
-            GameOption option = this._appView.SelectGame();
-
-            switch (option)
+            try
             {
-                case GameOption.TicTacToe:
-                    this._ticTacToeController.RunMainMenu(session);
-                    break;
+                GameOption option = this._appView.SelectGame();
 
-                case GameOption.SnakeWaterGun:
-                    this._snakeWaterGunController.RunSnakeWaterGunGame(session);
-                    break;
+                switch (option)
+                {
+                    case GameOption.TicTacToe:
+                        this._ticTacToeController.RunMainMenu(session);
+                        break;
 
-                case GameOption.LogOut:
-                    if (session.IsGuest && this._appView.ConfirmLogout())
-                    {
-                        this._scoreService.ClearGuestData(session);
-                        this._ticTacToeService.ClearGuestData(session);
-                        return;
-                    }
-                    else if (!session.IsGuest)
-                    {
-                        return;
-                    }
+                    case GameOption.SnakeWaterGun:
+                        this._snakeWaterGunController.RunSnakeWaterGunGame(session);
+                        break;
 
-                    break;
+                    case GameOption.Profile:
+                        this.HandleProfile(session);
+                        break;
+
+                    case GameOption.LogOut:
+                        if (session.IsGuest && this._appView.ConfirmLogout())
+                        {
+                            this._scoreService.ClearGuestData(session);
+                            this._ticTacToeService.ClearGuestData(session);
+                            return;
+                        }
+                        else if (!session.IsGuest)
+                        {
+                            return;
+                        }
+
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                this._appView.DisplayError(ex.Message);
             }
         }
+    }
+
+    private void HandleProfile(UserSession session)
+    {
+        if (session.IsGuest)
+        {
+            this._appView.DisplayInfo("Login to view your profile.");
+            return;
+        }
+
+        (string username, string fullName, string email, DateTime joinDate) = this._authController.GetProfile(session.UserName);
+
+        this._appView.DisplayProfile(username, fullName, email, joinDate);
+
+        EditOption option = this._appView.GetProfileEditOption();
+
+        switch (option)
+        {
+            case EditOption.Name:
+                this._authController.ChangeName(session);
+                break;
+
+            case EditOption.Password:
+                this._authController.ChangePassword(session);
+                break;
+
+            case EditOption.Back:
+                return;
+        }
+
+        this._appView.Pause();
     }
 }

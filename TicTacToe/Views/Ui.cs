@@ -39,7 +39,7 @@ internal class Ui
     /// </summary>
     public static void Pause()
     {
-        AnsiConsole.Markup("[grey]Press any key to continue...[/]");
+        AnsiConsole.MarkupLine("[grey]Press any key to continue...[/]");
         Console.ReadKey();
     }
 

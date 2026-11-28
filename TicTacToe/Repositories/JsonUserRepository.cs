@@ -42,4 +42,19 @@ internal class JsonUserRepository : IUserRepository
     {
         return this._users.Any(user => user.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase));
     }
+
+    /// <inheritdoc/>
+    public bool UpdateUser(User user)
+    {
+        int index = this._users.FindIndex(existing => existing.UserName.Equals(user.UserName, StringComparison.OrdinalIgnoreCase));
+
+        if (index == -1)
+        {
+            return false;
+        }
+
+        this._users[index] = user;
+        this._jsonFileManager.WriteAll(this._filePath, this._users);
+        return true;
+    }
 }

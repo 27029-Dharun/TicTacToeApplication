@@ -26,4 +26,11 @@ internal interface IUserRepository
     /// <param name="userName">The username to checked.</param>
     /// <returns>True if the user exists, otherwise false.</returns>
     bool Exists(string userName);
+
+    /// <summary>
+    /// Updates the user data.
+    /// </summary>
+    /// <param name="user">The user instance to get updated.</param>
+    /// <returns>True if the user gets updated; otherwise, false</returns>
+    bool UpdateUser(User user);
 }

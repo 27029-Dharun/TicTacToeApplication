@@ -69,6 +69,51 @@ internal class AuthController
     }
 
     /// <summary>
+    /// Gets the profile of the user.
+    /// </summary>
+    /// <param name="userName">The user name of the player.</param>
+    /// <returns>The details of the profile.</returns>
+    internal (string userName, string fullName, string email, DateTime joinDate) GetProfile(string userName)
+    {
+        (string userName, string fullName, string email, DateTime joinDate) user = this._authService.GetUserDetails(userName);
+        return user;
+    }
+
+    /// <summary>
+    /// Represent an option to change the name.
+    /// </summary>
+    /// <param name="session">The user's session</param>
+    internal void ChangeName(UserSession session)
+    {
+        string name = this._authView.GetName();
+        if (!this._authService.EditName(name, session))
+        {
+            this._authView.DisplayError("Failed to change the name.");
+            return;
+        }
+
+        this._authView.DisplaySuccess("Name changed successfully.");
+    }
+
+    /// <summary>
+    /// Changes the password.
+    /// </summary>
+    /// <param name="session">The session of the user.</param>
+    internal void ChangePassword(UserSession session)
+    {
+        string oldPassword = this._authView.GetPassword("Enter your old password: ");
+        string password = this._authView.GetPassword();
+
+        if (!this._authService.EditPassword(oldPassword, password, session))
+        {
+            this._authView.DisplayError("Failed to change the password.");
+            return;
+        }
+
+        this._authView.DisplaySuccess("Password changed successfully.");
+    }
+
+    /// <summary>
     /// Get the credentials of player 2.
     /// </summary>
     /// <returns>The user session of the player 2</returns>
@@ -126,8 +171,9 @@ internal class AuthController
         string name = this._authView.GetName();
         string email = this._authView.GetEmail();
         string password = this._authView.GetPassword();
+        string confirmPassword = this._authView.GetPassword("Enter your password to confirm: ");
 
-        var (success, message) = this._authService.CreateUser(username, name, password, email);
+        var (success, message) = this._authService.CreateUser(username, name, password, confirmPassword, email);
 
         if (success)
         {

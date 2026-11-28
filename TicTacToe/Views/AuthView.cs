@@ -56,14 +56,16 @@ internal class AuthView
     /// <summary>
     /// Prompts the user to enter a valid password while hiding the characters.
     /// </summary>
+    /// <param name="message">An optional parameter message</param>
     /// <returns>The validated password string.</returns>
     /// <exception cref="InvalidDataException">Thrown when the user runs out of valid password attempts.</exception>
-    internal string GetPassword()
+    internal string GetPassword(string? message = null)
     {
         int remainingAttempts = 3;
+        string msg = message ?? "Enter your password: ";
 
         string password = AnsiConsole.Prompt(
-            new TextPrompt<string>("[grey]Enter your password: [/]")
+            new TextPrompt<string>($"[grey]{msg}[/]")
                 .Secret('*'));
 
         while (!Validator.IsValidPassword(password))
