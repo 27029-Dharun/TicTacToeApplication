@@ -22,6 +22,11 @@ internal class EasyStrategy : IMoveStrategy
             .Where(index => board[index] == Symbol.Empty)
             .ToList();
 
+        if (availableCells.Count == 0)
+        {
+            return -1;
+        }
+
         int randomIndex = Random.Shared.Next(availableCells.Count);
 
         return availableCells[randomIndex];

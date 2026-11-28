@@ -485,7 +485,7 @@ internal class TicTacToeView
 
             table.AddRow(
                 i.ToString(),
-                game.PlayedAt.ToString("dd-MM-yyyy"),
+                game.PlayedAt.ToLocalTime().ToString("dd-MM-yyyy"),
                 opponent,
                 result,
                 game.Mode.ToString(),

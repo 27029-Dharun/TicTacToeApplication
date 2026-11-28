@@ -145,7 +145,7 @@ internal class TicTacToeService
             GameType = GameType.TicTacToe,
             PlayerOneName = session.UserName,
             Mode = mode,
-            PlayedAt = DateTime.Now,
+            PlayedAt = DateTime.UtcNow,
             TimeLimitSeconds = timer,
         };
 

@@ -212,7 +212,7 @@ internal class SnakeWaterGunView
 
             table.AddRow(
                 i.ToString(),
-                game.PlayedAt.ToString("dd-MM-yyyy"),
+                game.PlayedAt.ToLocalTime().ToString("dd-MM-yyyy"),
                 result,
                 $"{game.PlayerOneScore}-{game.PlayerTwoScore}");
 

@@ -34,12 +34,12 @@ internal class JsonUserRepository : IUserRepository
     /// <inheritdoc/>
     public User? GetUser(string userName)
     {
-        return this._users.FirstOrDefault(user => user.UserName == userName);
+        return this._users.FirstOrDefault(user => user.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <inheritdoc/>
     public bool Exists(string userName)
     {
-        return this._users.Any(user => user.UserName == userName);
+        return this._users.Any(user => user.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase));
     }
 }

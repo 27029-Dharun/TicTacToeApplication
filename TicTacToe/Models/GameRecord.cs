@@ -65,7 +65,7 @@ internal class GameRecord
     /// Gets or sets the date and time when the game was played.
     /// </summary>
     /// <value>The date and time when the game was played.</value>
-    public DateTime PlayedAt { get; set; } = DateTime.Now;
+    public DateTime PlayedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Gets or sets the name of the winner of the game.

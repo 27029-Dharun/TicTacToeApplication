@@ -141,7 +141,7 @@ internal class TicTacToeController
         {
             UserSession? playerTwoSession = this._authController.GetPlayer2();
 
-            if (playerTwoSession is null)
+            if (playerTwoSession is null || playerTwoSession.UserName.Equals(session.UserName, StringComparison.OrdinalIgnoreCase))
             {
                 this._ticTacToeView.DisplayError("Player 2 authentication failed, game cancelled.");
                 return;
